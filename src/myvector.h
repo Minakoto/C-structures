@@ -1,4 +1,6 @@
-
+#include <malloc.h>
+#include <iostream>
+using namespace std;
 
 template <class T> 
 class Vector {
@@ -11,17 +13,17 @@ private:
     };
     class Rev_Iterator {
 
-    }
-    
+    };
+
 public:
     Vector() : capacity(0), size(0) {}
     Vector(long size, T val) {
 
     }
-    Vector(Vector right) {
-        this->capacity = right->capacity;
-        this->size = right->size;
-    }
+    // Vector(const Vector<T> right) {
+    //     this->capacity = right->capacity;
+    //     this->size = right->size;
+    // }
     ~Vector() {
 
     }
@@ -35,15 +37,28 @@ public:
         return size; //?
     }
     long FindByVal(T val) {
+        for(int i = 0; i < size; i++)
+            if (*(data + i) == val) return i;
+        return -1;
 
     }
-    long Read(long pos) {
+    T Read(long pos) {
+        if(pos < size) return data[pos];
+        else return 0;
 
     }
-    long Mod(long pos) {
+    int Mod(long pos, T val) {
+        int res = 0;
+        if(pos < size) {
+            data[pos] = val;
+            res = 1;
+        }
+        return res;
 
     }
-    void Add() {
+    void Add() { //TODO DEFO
+        capacity *= 2;
+
 
     }
     void Add(long pos) {
@@ -55,6 +70,4 @@ public:
     void Del(long pos) {
 
     }
-
-
 };
