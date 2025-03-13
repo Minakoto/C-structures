@@ -20,7 +20,7 @@ public:
     Vector(long size, T val) {
         this->size = size;
         while(this->size > capacity) {
-            data = Renew();
+//            data = Renew();
         }
         for(int i = 0; i < this->size; i++) {
             data[i] = val;
@@ -65,7 +65,7 @@ public:
     void Add(T val) { //TODO DEFO
         size += 1;
         if(size > capacity) 
-            data = Renew();
+ //           data = Renew();
         data[size - 1] = val;
     }
     void Add(long pos, T val) {}
