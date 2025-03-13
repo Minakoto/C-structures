@@ -18,14 +18,20 @@ private:
 public:
     Vector() : capacity(0), size(0) {}
     Vector(long size, T val) {
-
+        this->size = size;
+        while(this->size > capacity) {
+            data = Renew();
+        }
+        for(int i = 0; i < this->size; i++) {
+            data[i] = val;
+        }
     }
-    // Vector(const Vector<T> right) {
-    //     this->capacity = right->capacity;
-    //     this->size = right->size;
-    // }
+    Vector(const Vector<T>& right) {
+        this->capacity = right->capacity;
+        this->size = right->size;
+    }
     ~Vector() {
-
+        free(data);
     }
     long GetCapacity() {
         return capacity;
@@ -34,7 +40,7 @@ public:
         return size;
     }
     bool IsEmpty() {
-        return size; //?
+        return (bool)size;
     }
     long FindByVal(T val) {
         for(int i = 0; i < size; i++)
@@ -56,18 +62,13 @@ public:
         return res;
 
     }
-    void Add() { //TODO DEFO
-        capacity *= 2;
-
-
+    void Add(T val) { //TODO DEFO
+        size += 1;
+        if(size > capacity) 
+            data = Renew();
+        data[size - 1] = val;
     }
-    void Add(long pos) {
-
-    }
-    void Del(T val) {
-
-    }
-    void Del(long pos) {
-
-    }
+    void Add(long pos, T val) {}
+    void Del(T val) {}
+    void Del(long pos) {}
 };
