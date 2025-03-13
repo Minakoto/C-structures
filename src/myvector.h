@@ -8,14 +8,27 @@ private:
     T* data;
     long capacity;
     long size;
-    class Iterator {
-
-    };
-    class Rev_Iterator {
-
-    };
-
+    T* Renew() {
+        capacity *= 2;
+        T* tmp = malloc(sizeof(T)*capacity);
+        for(int i = 0; i < size; i++) {
+            tmp[i] = data[i];
+        }
+        free(data);
+        return tmp;
+    }
 public:
+    class Iterator {
+    private:
+        Vector * v;
+        long cur_pos;
+    public:
+        Iterator() : cur_pos(0), v(NULL){};
+        Iterator(int pos) : cur_pos(pos) {};
+    };
+    friend class Iterator;
+    class Rev_Iterator {};
+    friend class Rev_Iterator;
     Vector() : capacity(0), size(0) {}
     Vector(long size, T val) {
         this->size = size;
@@ -53,22 +66,24 @@ public:
         else return 0;
 
     }
-    int Mod(long pos, T val) {
-        int res = 0;
+    bool Mod(long pos, T val) {
+        bool res = false;
         if(pos < size) {
             data[pos] = val;
-            res = 1;
+            res = true;
         }
         return res;
 
     }
-    void Add(T val) { //TODO DEFO
+    void Add(T val) { //Throw exception somehow
         size += 1;
         if(size > capacity) 
             data = Renew();
         data[size - 1] = val;
     }
-    void Add(long pos, T val) {}
+    void Add(long pos, T val) {
+
+    } //Throw exception somehow
     void Del(T val) {}
     void Del(long pos) {}
 };
