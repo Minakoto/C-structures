@@ -1,7 +1,6 @@
 #include <malloc.h>
 #include <iostream>
 using namespace std;
-#define first_capacity 1
 
 template <class T> 
 class List {
@@ -9,7 +8,7 @@ private:
     T* data;
     long capacity;
     long size;
-    long capacity0 = 16;
+    long const capacity0 = 16;
 public:
     class Iterator {
     private:

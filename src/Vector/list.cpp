@@ -81,11 +81,81 @@ bool List<T>::Del(long pos) {
     size-=1;
     return true;
 }
-
-
 template <class T>
 void List<T>::WriteList()  {
     for(int i = 0; i < size; i++) {
         cout << '[' << i << '] ' << this->data[i] << "\n";
     }
+}
+template <class T>
+List<T>::Iterator::Iterator() : v(NULL), cur_pos(0) {}
+template <class T>
+List<T>::Iterator::Iterator(List* list) {
+    v = list;
+    cur_pos = 0;
+}
+template <class T>
+T& List<T>::Iterator::operator *() {
+    return v.data[cur_pos];
+}
+template <class T>
+List<T>::Iterator& List<T>::Iterator::operator ++() {
+    this->cur_pos++;
+    return this;
+}
+template <class T>
+List<T>::Iterator& List<T>::Iterator::operator --() {
+    this->cur_pos--;
+    return this;
+}
+template <class T>
+bool List<T>::Iterator::operator ==(const Iterator& two) {
+    if(this->v == two->v && this->cur_pos == two->cur_pos) return true;
+    return false; 
+}
+template <class T>
+bool List<T>::Iterator::operator !=(const Iterator& two) {
+    return !(this == two);
+}
+
+template <class T>
+List<T>::Rev_Iterator::Rev_Iterator() : v(NULL), cur_pos(0) {}
+template <class T>
+List<T>::Rev_Iterator::Rev_Iterator(long pos) {
+
+}
+template <class T>
+T& List<T>::Rev_Iterator::operator *() {}
+template <class T>
+List<T>::Rev_Iterator& List<T>::Rev_Iterator::operator ++() {}
+template <class T>
+List<T>::Rev_Iterator& List<T>::Rev_Iterator::operator --() {}
+template <class T>
+bool List<T>::Rev_Iterator::operator ==(const Rev_Iterator&) {}
+template <class T>
+bool List<T>::Rev_Iterator::operator !=(const Rev_Iterator&) {}
+
+template <class T>
+List<T>::Iterator List<T>::begin() {
+    List<T>::Iterator it{this};
+    return this->size ? it : this->end();
+}
+
+template <class T>
+List<T>::Iterator List<T>::end() {
+    List<T>::Iterator it{this};
+    it.cur_pos = this->size;
+    return it;
+}
+template <class T>
+List<T>::Rev_Iterator List<T>::rbegin() {
+    List<T>::Rev_Iterator it{this};
+    it.cur_pos = this->size - 1;
+    return this->size ? it : this->rend();
+}
+template <class T>
+List<T>::Rev_Iterator List<T>::rend() {
+    List<T>::Rev_Iterator it{this};
+    it.cur_pos = -1;
+    return it;
 }
