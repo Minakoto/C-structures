@@ -10,3 +10,5 @@ menu: menu.o
 
 menu.o: menu.cpp clvector.h
 	$(CC) -c menu.cpp
+clean:
+	rm menu

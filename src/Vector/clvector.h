@@ -10,7 +10,7 @@ private:
     T* data;
     long capacity;
     long size;
-    long const capacity0 = 16;
+    long const capacity0 = 4;
 
     T* renew() {
         this->capacity *= 2;
@@ -56,14 +56,14 @@ public:
         long cur_pos;
     public:
         Rev_Iterator() : v(NULL), cur_pos(0) {}
-        Rev_Iterator(T list) {
+        Rev_Iterator(List* list) {
             v = list;
-            cur_pos = list.size;
+            cur_pos = list->size - 1;
         }
         T& operator *() {return v->data[cur_pos];}
         Rev_Iterator& operator ++() {
             this->cur_pos--;
-            return this;
+            return *this;
         }
         Rev_Iterator& operator --() {
             this->cur_pos++;
@@ -109,6 +109,10 @@ public:
         if(pos > size) throw "Out of range";
         return data[pos];
     }
+    void Mod(T value, long pos) {
+        if(pos > size) throw "Out of range";
+        this->data[pos] = value;
+    }
     void Add(T value) {
         data[size++] = value;
         size > capacity ? data = renew() : 0;
@@ -141,7 +145,6 @@ public:
         for(int i = 0; i < size; i++) {
             cout << '[' << i << "] " << this->data[i] << endl;
         }
-        cout << this->GetCapacity() << ' ' << this->GetSize() << endl;
     }
 
     Iterator begin() {
