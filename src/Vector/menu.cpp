@@ -1,6 +1,7 @@
 #include "clvector.h"
 
-int main() {
+
+void menu() {
     short cmd = 1; 
     while(cmd) {
         cout << "Меню:" << endl;
@@ -49,5 +50,25 @@ int main() {
                 cout << "Неизвестная команда" << endl;
         }
     }
-    
 }
+
+int main() {
+    // menu();
+    List<int> t = List<int>();
+    t.Add(5);
+    t.Add(59);
+    t.Add(78);
+    t.Add(3);
+    t.Add(4);
+    t.WriteList();
+    int i = 0;
+    try{
+        i = t.Read(3);
+    }
+    catch(const char* er) {
+        cout << er;
+    }
+    return 0;
+}
+
+
