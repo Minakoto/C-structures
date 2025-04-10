@@ -4,11 +4,14 @@ using namespace std;
 
 template <class T> 
 class List {
+friend class Iterator;
+friend class Rev_Iterator;
 private:
     T* data;
     long capacity;
     long size;
     long const capacity0 = 16;
+
     T* renew() {
         this->capacity *= 2;
         T* tmp = new T[this->capacity];
@@ -27,21 +30,24 @@ public:
             v = list;
             cur_pos = 0;
         }
-        T& operator *() { return v.data[cur_pos];}
+        
+        T& operator *() { return v->data[cur_pos];}
+
         Iterator& operator ++() {
             this->cur_pos++;
-            return this;
+            return *this;
         }
         Iterator& operator --() {
             this->cur_pos--;
-            return this;
+            return *this;
         }
         bool operator ==(const Iterator& two) {
-            if(this->v == two->v && this->cur_pos == two->cur_pos) return true;
+            if(this->v == two.v && this->cur_pos == two.cur_pos) return true;
             return false; 
         }
         bool operator !=(const Iterator& two) {
-            return !(this == two);
+            if(this->v == two.v && this->cur_pos == two.cur_pos) return false;
+            return true; 
         }
     };
     class Rev_Iterator {
@@ -49,26 +55,27 @@ public:
         List * v;
         long cur_pos;
     public:
-        Rev_Iterator()  : v(NULL), cur_pos(0) {}
+        Rev_Iterator() : v(NULL), cur_pos(0) {}
         Rev_Iterator(T list) {
             v = list;
             cur_pos = list.size;
         }
-        T& operator *() {return v.data[cur_pos];}
+        T& operator *() {return v->data[cur_pos];}
         Rev_Iterator& operator ++() {
-            this->cur_pos++;
+            this->cur_pos--;
             return this;
         }
         Rev_Iterator& operator --() {
-            this->cur_pos--;
-            return this;
+            this->cur_pos++;
+            return *this;
         }
         bool operator ==(const Rev_Iterator& two) {
             if(this->v == two->v && this->cur_pos == two->cur_pos) return true;
             return false; 
         }
         bool operator !=(const Rev_Iterator& two) {
-            return !(this == two);
+            if(this->v == two->v && this->cur_pos == two->cur_pos) return false;
+            return true; 
         }
     };
     List() {
@@ -108,9 +115,9 @@ public:
     }
     bool Add(long pos, T value) {
         if(pos > size || pos < 0) return false;
-        for(int i = size - 1; i != pos; --i) data[i] = data[i + 1];
-        data[pos] = value;
+        for(int i = size; i != pos; --i) data[i] = data[i - 1];
         size++;
+        data[pos] = value;
         size > capacity ? data = renew() : 0;
         return true;
     }
@@ -123,6 +130,7 @@ public:
             }
         return Del(pos);
     }
+
     bool Del(long pos) {
         if(pos > size || pos < 0) return false;
         for(int i = pos; i <size - 1; i++) data[i] = data[i+1]; 
@@ -131,28 +139,26 @@ public:
     }
     void WriteList() {
         for(int i = 0; i < size; i++) {
-            cout << '[' << i << "] " << this->data[i] << "\n";
+            cout << '[' << i << "] " << this->data[i] << endl;
         }
+        cout << this->GetCapacity() << ' ' << this->GetSize() << endl;
     }
-    friend class Iterator;
-    friend class Rev_Iterator;
+
     Iterator begin() {
         List<T>::Iterator it{this};
         return this->size ? it : this->end();
     }
     Iterator end() {
         List<T>::Iterator it{this};
-        it.cur_pos = this->size;
         return it;
     }
     Rev_Iterator rbegin() {
         List<T>::Rev_Iterator it{this};
-        it.cur_pos = this->size - 1;
+        
         return this->size ? it : this->rend();
     }
     Rev_Iterator rend() {
         List<T>::Rev_Iterator it{this};
-        it.cur_pos = -1;
         return it;
     }
 };
