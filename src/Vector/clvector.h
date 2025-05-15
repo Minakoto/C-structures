@@ -10,7 +10,7 @@ private:
     T* data;
     long capacity;
     long size;
-    long const capacity0 = 4;
+    long const capacity0 = 2;
 
     T* renew() {
         this->capacity *= 2;
@@ -31,13 +31,17 @@ public:
             cur_pos = 0;
         }
         
-        T& operator *() { return v->data[cur_pos];}
+        T& operator *() {
+            if(cur_pos == v->size || cur_pos == -1) throw "Out of range";
+            return v->data[cur_pos];}
 
         Iterator& operator ++() {
+            if(cur_pos == v->size || cur_pos == -1) return *this;
             this->cur_pos++;
             return *this;
         }
         Iterator& operator --() {
+            if(cur_pos == v->size || cur_pos == -1) return *this;
             this->cur_pos--;
             return *this;
         }
@@ -92,26 +96,29 @@ public:
         this->capacity = list->capacity;
         for(int i = 0; i < this->size; i++) this->Add(this->data[i]);
     }
-    ~List() {Clean();}
+    ~List() {
+        delete data;
+        Clean();
+    }
     long GetCapacity() {return this->capacity;}
     long GetSize() {return this->size;}
     bool IsEmpty() { return size ? 1 : 0;}
     void Clean()  {
-        delete data;
         size = 0;
-        capacity = 0;
+        capacity = capacity0;
     }
     long FindByVal(T value) {
         for(int i = 0; i < size; i++) if(data[i] == value) return i;
         return -1;
     }
     T Read(long pos) {
-        if(pos > size) throw "Out of range";
+        if(pos >= size) throw "Out of range";
         return data[pos];
     }
-    void Mod(T value, long pos) {
-        if(pos > size) throw "Out of range";
+    bool Mod(T value, long pos) {
+        if(pos > size) return false;
         this->data[pos] = value;
+        return true;
     }
     void Add(T value) {
         data[size++] = value;

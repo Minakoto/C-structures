@@ -5,9 +5,11 @@ void menu() {
     short cmd = 1; 
     int choice;
     int element;
-    List<int> list;
+    // List<int> list;
     List<int>::Iterator g;
     List<int>::Rev_Iterator rev_g;
+    cout << "Начальная емкость: " << endl;
+    
     while(cmd) {
         cout << "________________________________________________________" << endl;
         cout << "Меню:" << endl;
@@ -29,6 +31,7 @@ void menu() {
         cout << "16. Вывести список" << endl;
         cout << "17. Поиск" << endl;
         cout << "18. Изменение значения" << endl;
+        cout << "19. Очистить список" << endl;
         cout << "0. Выход" << endl;
         cout << "Выберите команду: ";
     
@@ -120,13 +123,17 @@ void menu() {
                     cin >> choice;
                     cout << "Значение: "  << list.Read(choice) << endl;
                 }
+                break;
             case 18:
                 cout << "Введите позицию: ";
                 cin >> choice;
                 cout << "Введите значение: ";
                 cin >> element;
                 list.Mod(element, choice);
-
+                break;
+            case 19:
+                list.Clean();
+                break;
             case 0:
                 break;
             default:
