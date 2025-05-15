@@ -12,8 +12,11 @@ private:
     long size;
     long const capacity0 = 2;
 
-    T* renew() {
-        this->capacity *= 2;
+    T* renew(int mode) {
+        if(mode)
+            this->capacity *= 2;
+        else
+            this->capacity = size + capacity0;
         T* tmp = new T[this->capacity];
         for(int i = 0; i < size; i++) tmp[i] = data[i];
         delete data;
@@ -36,12 +39,18 @@ public:
             return v->data[cur_pos];}
 
         Iterator& operator ++() {
-            if(cur_pos == v->size || cur_pos == -1) return *this;
+            if(cur_pos == v->size || cur_pos == -1) {
+                *this = v->end();
+                return *this;
+            }
             this->cur_pos++;
             return *this;
         }
         Iterator& operator --() {
-            if(cur_pos == v->size || cur_pos == -1) return *this;
+            if(cur_pos == 0 || cur_pos == -1) {
+                *this = v->end();
+                return *this;
+            }
             this->cur_pos--;
             return *this;
         }
@@ -57,28 +66,39 @@ public:
     class Rev_Iterator {
     private:
         List * v;
-        long cur_pos;
+        long cur_pos = -1;
     public:
         Rev_Iterator() : v(NULL), cur_pos(0) {}
         Rev_Iterator(List* list) {
             v = list;
             cur_pos = list->size - 1;
         }
-        T& operator *() {return v->data[cur_pos];}
+        T& operator *() {
+            if(cur_pos == v->size || cur_pos == -1) throw "Out of range";
+            return v->data[cur_pos];
+        }
         Rev_Iterator& operator ++() {
+            if(cur_pos == 0 || cur_pos == -1) {
+                *this = v->rend();
+                return *this;
+            }
             this->cur_pos--;
             return *this;
         }
         Rev_Iterator& operator --() {
+            if(cur_pos == v->size || cur_pos == -1) {
+                *this = v->rend();
+                return *this;
+            }
             this->cur_pos++;
             return *this;
         }
         bool operator ==(const Rev_Iterator& two) {
-            if(this->v == two->v && this->cur_pos == two->cur_pos) return true;
+            if(this->v == two.v && this->cur_pos == two.cur_pos) return true;
             return false; 
         }
         bool operator !=(const Rev_Iterator& two) {
-            if(this->v == two->v && this->cur_pos == two->cur_pos) return false;
+            if(this->v == two.v && this->cur_pos == two.cur_pos) return false;
             return true; 
         }
     };
@@ -122,14 +142,14 @@ public:
     }
     void Add(T value) {
         data[size++] = value;
-        size > capacity ? data = renew() : 0;
+        size > capacity ? data = renew(1) : 0;
     }
     bool Add(long pos, T value) {
         if(pos > size || pos < 0) return false;
         for(int i = size; i != pos; --i) data[i] = data[i - 1];
         size++;
         data[pos] = value;
-        size > capacity ? data = renew() : 0;
+        size > capacity ? data = renew(1) : 0;
         return true;
     }
     bool Del(T value) {
@@ -146,6 +166,7 @@ public:
         if(pos > size || pos < 0) return false;
         for(int i = pos; i <size - 1; i++) data[i] = data[i+1]; 
         size-=1;
+        size <= capacity/2 ? data = renew(0) : 0;
         return true;
     }
     void WriteList() {
@@ -164,7 +185,6 @@ public:
     }
     Rev_Iterator rbegin() {
         List<T>::Rev_Iterator it{this};
-        
         return this->size ? it : this->rend();
     }
     Rev_Iterator rend() {

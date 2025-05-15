@@ -5,7 +5,8 @@ void menu() {
     short cmd = 1; 
     int choice;
     int element;
-    // List<int> list;
+    int found;
+    List<int> list;
     List<int>::Iterator g;
     List<int>::Rev_Iterator rev_g;
     cout << "Начальная емкость: " << endl;
@@ -25,13 +26,15 @@ void menu() {
         cout << "10. Получить значение на позиции обратного итератора" << endl;
         cout << "11. Изменить значение на позиции итератора" << endl;
         cout << "12. Изменить значение на позиции обратного итератора" << endl;
-        cout << "13. Количество элементов в списке" << endl;
-        cout << "14. Емкость списка" << endl;
-        cout << "15. Проверка на пустоту" << endl;
-        cout << "16. Вывести список" << endl;
-        cout << "17. Поиск" << endl;
-        cout << "18. Изменение значения" << endl;
-        cout << "19. Очистить список" << endl;
+        cout << "13. Сравнение итератора с end" << endl;
+        cout << "14. Сравнение обратного итератора с rend" << endl;
+        cout << "15. Количество элементов в списке" << endl;
+        cout << "16. Емкость списка" << endl;
+        cout << "17. Проверка на пустоту" << endl;
+        cout << "18. Вывести список" << endl;
+        cout << "19. Поиск" << endl;
+        cout << "20. Изменение значения" << endl;
+        cout << "21. Очистить список" << endl;
         cout << "0. Выход" << endl;
         cout << "Выберите команду: ";
     
@@ -47,7 +50,7 @@ void menu() {
                 else {
                         cout << "Введите позицию:" << endl;
                         cin >> choice;
-                        list.Add(choice, element);
+                        cout << list.Add(choice, element) << endl;
                     }
                 break;
             case 2:
@@ -56,12 +59,12 @@ void menu() {
             if (choice == 1) {
                 cout << "Введите значение:" << endl;
                 cin >> choice;
-                list.Del((int)choice);
+                cout << list.Del((int)choice);
             }
             else {
                     cout << "Введите позицию:" << endl;
                     cin >> choice;
-                    list.Del((long)choice);
+                    cout << list.Del((long)choice) << endl;
                 }
                 break;
             case 3:
@@ -83,10 +86,22 @@ void menu() {
                 --rev_g;
                 break;
             case 9:
-                cout << "Значение на позиции итератора: " << *g << endl;
+                try {
+                    found = *g;
+                } catch(...) {
+                    cout << "Исключение" << endl;
+                    break;
+                }
+                cout << "Значение на позиции итератора: " << found << endl;
                 break;
             case 10:
-                cout << "Значение на позиции обратного итератора: " << *rev_g << endl;
+                try {
+                    found = *rev_g;
+                } catch(...) {
+                    cout << "Исключение" << endl;
+                    break;
+                }
+                cout << "Значение на позиции итератора: " << found << endl;
                 break;
             case 11:
                 cout << "Введите значение:" << endl;
@@ -99,18 +114,24 @@ void menu() {
                 *rev_g = choice;
                 break;
             case 13:
-                cout << "Кол-во элементов в списке: " << list.GetSize() << endl;
+                cout << (g == list.end());
                 break;
             case 14:
-                cout << "Кол-во элементов в списке: " << list.GetCapacity() << endl;
+                cout << (rev_g == list.rend());
                 break;
             case 15:
-                cout << list.IsEmpty() << endl;
+                cout << "Кол-во элементов в списке: " << list.GetSize() << endl;
                 break;
             case 16:
-                list.WriteList();
+                cout << "Кол-во элементов в списке: " << list.GetCapacity() << endl;
                 break;
             case 17:
+                cout << list.IsEmpty() << endl;
+                break;
+            case 18:
+                list.WriteList();
+                break;
+            case 19:
             cout << "По какому полю будет происходить поиск? [1: по значению / 2: по позиции]" << endl;
             cin >> choice;
             if (choice == 1) {
@@ -121,17 +142,24 @@ void menu() {
             else {
                     cout << "Введите позицию:" << endl;
                     cin >> choice;
-                    cout << "Значение: "  << list.Read(choice) << endl;
+                    int found = 0;
+                    try {
+                        found = list.Read(choice);
+                    } catch(...) {
+                        cout << "Исключение" << endl;
+                        break;
+                    }
+                    cout << found << endl;
                 }
                 break;
-            case 18:
+            case 20:
                 cout << "Введите позицию: ";
                 cin >> choice;
                 cout << "Введите значение: ";
                 cin >> element;
-                list.Mod(element, choice);
+                cout << list.Mod(element, choice) << endl;
                 break;
-            case 19:
+            case 21:
                 list.Clean();
                 break;
             case 0:
