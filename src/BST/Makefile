@@ -2,7 +2,7 @@ CC = g++
 
 all: build
 
-build: menu
+build: menu test
 
 menu: menu.o
 	$(CC) menu.o -o menu
@@ -10,5 +10,13 @@ menu: menu.o
 
 menu.o: menu.cpp btree.h
 	$(CC) -c menu.cpp
+
+test: test.o
+	$(CC) test.o -o test
+	rm *.o
+
+test.o: test.cpp btree.h
+	$(CC) -c test.cpp
+
 clean:
-	rm menu
+	rm menu test
