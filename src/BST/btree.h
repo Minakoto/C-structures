@@ -58,6 +58,7 @@ public:
     }
     void clean() {
         clear(root);
+        root = nullptr;
     }
     int get_size() {
         return cnt(root);
