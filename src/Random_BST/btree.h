@@ -122,7 +122,6 @@ private:
         Node** current = &merged;
     
         while (a != nullptr && b != nullptr) {
-            // if (rand()/(RAND_MAX/(a->get_size() + b->get_size() + 1)) < a->get_size()) {
             if(rand() % (a->get_size() + b->get_size()) < a->get_size()) {
                 *current = a;
                 current = &(a->right);
@@ -192,7 +191,6 @@ public:
         count = 0;
         Node** current = &root;
         while (*current != nullptr) {
-            // if (rand() < (RAND_MAX / ((*current)->get_size() + 1))) {
             if(rand() % ((*current)->get_size() + 1) == 0) {
                 *current = root_add(*current, key, data);
                 return true;
@@ -207,17 +205,6 @@ public:
         (*current)->fixsize();
         return true;
     }
-    // Node* del(Node* node, K key) {
-    //     if(node == nullptr) return node;
-    //     if(node->key == key) {
-    //         Node* tmp = join(node->left, node->right);
-    //         delete node;
-    //         return tmp;
-    //     }    
-    //     else if(key < node->key) node->left = del(node->left, key);
-    //     else node->right = del(node->right, key);
-    //     return node;
-    // }
     bool del(K key) {
         Node** parent_ptr = &root;
         Node* current = root;
