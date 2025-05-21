@@ -25,7 +25,6 @@ int main() {
                     cin >> value1;
                     cin >> value2;
                     cout << root.add(value1, value2);
-                    // *root.get_root() = root.add(*root.get_root(), value1, value2); /// ??? What TODO REWRITE
                 }
                 else iterator = root.begin();
                 break;
@@ -35,7 +34,6 @@ int main() {
                     cout << "Введте значение ключа: ";
                     cin >> value1;
                     cout << root.del(value1);
-                    // *root.get_root() = root.del(*root.get_root(), value1);
                 } 
                 else r_iterator = root.rbegin();
                 break;
