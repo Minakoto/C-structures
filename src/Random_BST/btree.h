@@ -99,7 +99,50 @@ private:
             }
         }
         return new_node;
-     }
+    }
+    // Node* join(Node* a, Node* b) {
+    //     if(a == nullptr) return b;
+    //     if(b == nullptr) return a;
+    //     if(rand()/(RAND_MAX/(a->get_size() + b->get_size() + 1)) < a->get_size()) {
+    //         a->right = join(a->right, b);
+    //         a->fixsize();
+    //         return a;
+    //     }
+    //     else {
+    //         b->left = join(a, b->left);
+    //         b->fixsize();
+    //         return b;
+    //     }
+    // }
+    Node* join(Node* a, Node* b) {
+        if (a == nullptr) return b;
+        if (b == nullptr) return a;
+    
+        Node* merged = nullptr;
+        Node** current = &merged;
+    
+        while (a != nullptr && b != nullptr) {
+            // if (rand()/(RAND_MAX/(a->get_size() + b->get_size() + 1)) < a->get_size()) {
+            if(rand() % (a->get_size() + b->get_size()) < a->get_size()) {
+                *current = a;
+                current = &(a->right);
+                a = a->right;
+            } else {
+                *current = b;
+                current = &(b->left);
+                b = b->left;
+            }
+        }    
+        *current = (a != nullptr) ? a : b;
+    
+        Node* fix_ptr = merged;
+        while (fix_ptr != nullptr) {
+            fix_ptr->fixsize();
+            fix_ptr = (fix_ptr->right != nullptr) ? fix_ptr->right : fix_ptr->left;
+        }
+    
+        return merged;
+    }
 public:
     Btree() {
         root = NULL;
@@ -149,7 +192,8 @@ public:
         count = 0;
         Node** current = &root;
         while (*current != nullptr) {
-            if (rand() < (RAND_MAX / ((*current)->get_size() + 1))) {
+            // if (rand() < (RAND_MAX / ((*current)->get_size() + 1))) {
+            if(rand() % ((*current)->get_size() + 1) == 0) {
                 *current = root_add(*current, key, data);
                 return true;
             }
@@ -163,8 +207,39 @@ public:
         (*current)->fixsize();
         return true;
     }
+    // Node* del(Node* node, K key) {
+    //     if(node == nullptr) return node;
+    //     if(node->key == key) {
+    //         Node* tmp = join(node->left, node->right);
+    //         delete node;
+    //         return tmp;
+    //     }    
+    //     else if(key < node->key) node->left = del(node->left, key);
+    //     else node->right = del(node->right, key);
+    //     return node;
+    // }
     bool del(K key) {
-
+        Node** parent_ptr = &root;
+        Node* current = root;
+    
+        while (current != nullptr && current->key != key) {
+            if (key < current->key) {
+                parent_ptr = &(current->left);
+                current = current->left;
+            } else {
+                parent_ptr = &(current->right);
+                current = current->right;
+            }
+        }
+    
+        if (current == nullptr) {
+            return false;
+        }
+        
+        Node* joined_subtree = join(current->left, current->right);
+        *parent_ptr = joined_subtree;
+        delete current;
+    
         return true;
     }
     void list() {

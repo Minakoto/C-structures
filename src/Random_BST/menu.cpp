@@ -35,6 +35,7 @@ int main() {
                     cout << "Введте значение ключа: ";
                     cin >> value1;
                     cout << root.del(value1);
+                    // *root.get_root() = root.del(*root.get_root(), value1);
                 } 
                 else r_iterator = root.rbegin();
                 break;
