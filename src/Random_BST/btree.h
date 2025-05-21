@@ -100,20 +100,6 @@ private:
         }
         return new_node;
     }
-    // Node* join(Node* a, Node* b) {
-    //     if(a == nullptr) return b;
-    //     if(b == nullptr) return a;
-    //     if(rand()/(RAND_MAX/(a->get_size() + b->get_size() + 1)) < a->get_size()) {
-    //         a->right = join(a->right, b);
-    //         a->fixsize();
-    //         return a;
-    //     }
-    //     else {
-    //         b->left = join(a, b->left);
-    //         b->fixsize();
-    //         return b;
-    //     }
-    // }
     Node* join(Node* a, Node* b) {
         if (a == nullptr) return b;
         if (b == nullptr) return a;
@@ -131,6 +117,7 @@ private:
                 current = &(b->left);
                 b = b->left;
             }
+            count++;
         }    
         *current = (a != nullptr) ? a : b;
     
@@ -206,6 +193,7 @@ public:
         return true;
     }
     bool del(K key) {
+        count = 0;
         Node** parent_ptr = &root;
         Node* current = root;
     
@@ -217,6 +205,7 @@ public:
                 parent_ptr = &(current->right);
                 current = current->right;
             }
+            count++;
         }
     
         if (current == nullptr) {
