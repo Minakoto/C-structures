@@ -61,8 +61,9 @@ int main() {
             case 4:
                 if(mode) {
                     try {
-                        cout << "Введте значение ключа: ";
+                        cout << "Введте значения ключа и данных: ";
                         cin >> value1;
+                        cin >> value2;
                         root.write(value1, value2);
                     } catch(...) {
                         cout << "Исключение" << endl;
@@ -81,7 +82,7 @@ int main() {
             case 5:
                 if(mode) cout << root.get_size() << endl;
                 else {
-                    cout << "Введте значение ключа: ";
+                    cout << "Введте значение: ";
                     cin >> value1;
                     try {
                         *iterator = value1;
@@ -94,7 +95,7 @@ int main() {
             case 6:
                 if(mode) cout << root.is_empty() << endl;
                 else {
-                    cout << "Введте значение ключа: ";
+                    cout << "Введте значение: ";
                     cin >> value1;
                     try {
                         *r_iterator = value1;
@@ -108,24 +109,25 @@ int main() {
                 if(mode) root.list();
                 else ++iterator;
                 break;
+                
             case 8:
-                if(mode) root.print();
+                if(mode) root.print_horizontal();
                 else --iterator;
                 break;
             case 9:
+                if(mode) root.print();
+                ++r_iterator;
+                break;
+            case 10:
                 if(mode) {
                     mode = false;
                     break;
                 }
-                ++r_iterator;
-                break;
-            case 10:
-                if(mode) root.clean();
                 else --r_iterator;
                 break;
             case 11:
-                if(mode) break;
-                cout << (iterator == root.end());
+                if(mode) root.clean();
+                else cout << (iterator == root.end());
                 break;
             case 12:
                 if(mode) break;
@@ -153,8 +155,9 @@ void list(bool mode) {
         cout << "6. Проверка на пустоту" << endl;
         cout << "7. Вывод дерева (Формат Lr-r-Rr)" << endl; 
         cout << "8. Горизонтальное представление" << endl;
-        cout << "9. Операции над итераторами" << endl;
-        cout << "10. Очистка дерева" << endl;
+        cout << "9. Вертикальное представление" << endl;
+        cout << "10. Операции над итераторами" << endl;
+        cout << "11. Очистка дерева" << endl;
         cout << "0. Выход" << endl;
     }
     else {

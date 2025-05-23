@@ -1,5 +1,9 @@
 #include <malloc.h>
 #include <iostream>
+#include <vector>
+#include <cstring>
+#include <math.h>
+#include <sstream>
 using namespace std;
 
 template <class K, class T>
@@ -46,7 +50,24 @@ private:
             delete(node);
         }
     }
+    int get_height(Node* node) {
+        if (node == nullptr) return 0;
+        return 1 + std::max(get_height(node->left), get_height(node->right));
+    }
+
+    void fill_levels(Node* node, int level, int left, int right, vector<vector<string>>& levels) {
+        if (node == nullptr || level >= levels.size()) return;
+
+        int mid = (left + right) / 2;
+        stringstream ss;
+        ss << node->key;
+        levels[level][mid] = ss.str();
+
+        fill_levels(node->left, level + 1, left, mid - 1, levels);
+        fill_levels(node->right, level + 1, mid + 1, right, levels);
+    }
 public:
+
     Btree() {
         root = NULL;
     }
@@ -180,6 +201,26 @@ public:
         };
 
         prit(root, "", prit);
+    }
+    void print_horizontal() {
+        if (root == nullptr) {
+            cout << "Tree is empty!" << endl;
+            return;
+        }
+
+        int height = get_height(root);
+        int max_level = height - 1;
+        int max_nodes = pow(2, height) - 1;
+        vector<vector<string>> levels(height, vector<string>(max_nodes, "  "));
+
+        fill_levels(root, 0, 0, max_nodes - 1, levels);
+
+        for (int level = 0; level < height; level++) {
+            for (int i = 0; i < levels[level].size(); i++) {
+                cout << levels[level][i];
+            }
+            cout << endl;
+        }
     }
     Node* min(Node* node) {
         Node* min = node;        
