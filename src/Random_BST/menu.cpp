@@ -1,4 +1,4 @@
-#include "btree.h"
+#include "rnd_btree.h"
 
 #define l1 "1. "
 void list(bool);
@@ -6,9 +6,9 @@ void list(bool);
 
 int main() {
     srand(time(NULL));
-    Btree<int, int> root;
-    Btree<int, int>::Iterator iterator;
-    Btree<int, int>::Rev_Iterator r_iterator;
+    RND_Btree<int, int> root;
+    RND_Btree<int, int>::Iterator iterator;
+    RND_Btree<int, int>::Rev_Iterator r_iterator;
     bool exit = false, mode = true;
     int cmd = 0;
     int value1 = 0, value2 = 0, result = 0;

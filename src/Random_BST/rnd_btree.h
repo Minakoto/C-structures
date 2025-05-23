@@ -1,13 +1,10 @@
 #include <malloc.h>
 #include <iostream>
-#include <vector>
-#include <cstring>
-#include <math.h>
-#include <sstream>
+#include <stack>
 using namespace std;
 
 template <class K, class T>
-class Btree {
+class RND_Btree {
 friend class Iterator;
 friend class Rev_Iterator;
 friend class Node;
@@ -18,9 +15,17 @@ private:
             T data;
             Node* left;
             Node* right;
-            Node() : data(nullptr), key(0), left(nullptr), right(nullptr) {}
-            Node(T val, K k) : data(val), key(k), left(nullptr), right(nullptr) {}
-            K get_key() {return this->key;}
+            long size;
+            Node() : data(nullptr), key(0), left(nullptr), right(nullptr), size(1) {}
+            Node(T val, K k) : data(val), key(k), left(nullptr), right(nullptr), size(1) {}
+            void set_size(long in) {size = in;}
+            long get_size() {
+                if(this == nullptr) return 0;
+                else return size;
+            }
+            void fixsize() {
+                this->size = this->left->get_size() + this->right->get_size() + 1;
+            } 
     };
     Node* root;
     long count = 0;
@@ -50,31 +55,88 @@ private:
             delete(node);
         }
     }
-    int get_height(Node* node) {
-        if (node == nullptr) return 0;
-        return 1 + std::max(get_height(node->left), get_height(node->right));
+    Node* root_add(Node* sub, K key, T data) {
+        auto R = [](Node* tree)->Node* {
+            Node* new_root = tree->left;
+            if(!new_root) return tree;
+            tree->left = new_root->right;
+            new_root->right = tree;
+            new_root->size = tree->size;
+            tree->fixsize();
+            return new_root;
+        };
+        auto L = [](Node* tree)->Node* {
+            Node* new_root = tree->right;
+            if(!new_root) return tree;
+            tree->right = new_root->left;
+            new_root->left = tree;
+            new_root->size = tree->size;
+            tree->fixsize();
+            return new_root;
+        };
+        
+        Node* new_node = new Node(data, key);
+        if(sub == nullptr) return new_node;
+        stack<Node*> path;
+        Node* cur = sub;
+        while(cur != nullptr) {
+            path.push(cur);
+            if(key == cur->key) return sub;
+            if(key < cur->key) cur = cur->left;
+            else cur = cur->right;
+            count++;
+        }
+        while(!path.empty()) {
+            Node* parent = path.top();
+            path.pop();
+            if(key < parent->key) {
+                parent->left = new_node;
+                new_node = R(parent);
+            }
+            else {
+                parent->right = new_node;
+                new_node = L(parent);
+            }
+        }
+        return new_node;
     }
-
-    void fill_levels(Node* node, int level, int left, int right, vector<vector<string>>& levels) {
-        if (node == nullptr || level >= levels.size()) return;
-
-        int mid = (left + right) / 2;
-        stringstream ss;
-        ss << node->key;
-        levels[level][mid] = ss.str();
-
-        fill_levels(node->left, level + 1, left, mid - 1, levels);
-        fill_levels(node->right, level + 1, mid + 1, right, levels);
+    Node* join(Node* a, Node* b) {
+        if (a == nullptr) return b;
+        if (b == nullptr) return a;
+    
+        Node* merged = nullptr;
+        Node** current = &merged;
+    
+        while (a != nullptr && b != nullptr) {
+            if(rand() % (a->get_size() + b->get_size()) < a->get_size()) {
+                *current = a;
+                current = &(a->right);
+                a = a->right;
+            } else {
+                *current = b;
+                current = &(b->left);
+                b = b->left;
+            }
+            count++;
+        }    
+        *current = (a != nullptr) ? a : b;
+    
+        Node* fix_ptr = merged;
+        while (fix_ptr != nullptr) {
+            fix_ptr->fixsize();
+            fix_ptr = (fix_ptr->right != nullptr) ? fix_ptr->right : fix_ptr->left;
+        }
+    
+        return merged;
     }
 public:
-
-    Btree() {
+    RND_Btree() {
         root = NULL;
     }
-    Btree(Btree<K, T>& other) : root(nullptr) {
+    RND_Btree(RND_Btree<K, T>& other) : root(nullptr) {
         root = cpy(other.root);
     }
-    ~Btree() {
+    ~RND_Btree() {
         clear(root);
     }
     void clean() {
@@ -83,6 +145,9 @@ public:
     }
     int get_size() {
         return cnt(root);
+    }
+    Node** get_root() {
+        return &root;
     }
     bool is_empty() {
         return root == nullptr;
@@ -109,68 +174,48 @@ public:
         if(tmp == nullptr) throw "Not found exception";
         return tmp->data;
     }
-    bool add(K key, T data) {
+    bool add(int key, int data) {
         count = 0;
-        if(root == nullptr) {
-            root = new Node(data, key);
-            return true;
-        }
-        Node* tmp = root;
-        Node* prev = tmp;
-        while(tmp != nullptr) {
-            prev = tmp;
-            if(key == tmp->key) return false;
-            if(key < tmp->key) tmp = tmp->left;
-            else tmp = tmp->right;
+        Node** current = &root;
+        while (*current != nullptr) {
+            if(rand() % ((*current)->get_size() + 1) == 0) {
+                *current = root_add(*current, key, data);
+                return true;
+            }
+            if (key == (*current)->key) return false;
+            
+            if (key < (*current)->key) current = &((*current)->left);
+            else current = &((*current)->right);
             count++;
         }
-        if(key < prev->key) prev->left = new Node(data, key);
-        else prev->right = new Node(data, key);
+        *current = new Node(data, key);
+        (*current)->fixsize();
         return true;
     }
     bool del(K key) {
         count = 0;
-        Node* cur = root;
-        Node* par = nullptr;
-        while(cur != nullptr && cur->key != key) {
-            par = cur;
-            if(key < cur->key) cur = cur->left;
-            else cur = cur->right;
+        Node** parent_ptr = &root;
+        Node* current = root;
+    
+        while (current != nullptr && current->key != key) {
+            if (key < current->key) {
+                parent_ptr = &(current->left);
+                current = current->left;
+            } else {
+                parent_ptr = &(current->right);
+                current = current->right;
+            }
             count++;
         }
-        if(cur == nullptr) return false;
-        if(cur->left == nullptr && cur->right == nullptr) {
-            if(par == nullptr) root = nullptr;
-            else if(par->left == cur) par->left = nullptr;
-            else par->right = nullptr;
-            delete cur;
+    
+        if (current == nullptr) {
+            return false;
         }
-        else if (cur->left == nullptr || cur->right == nullptr) {
-            Node* child = (cur->left != nullptr) ? cur->left : cur->right;
-            if(par == nullptr) root = child;
-            else if(par->left == cur) par->left = child;
-            else par->right = child;
-            delete cur;
-        }
-        else {
-            Node* next = cur->right;
-            if(next->left == nullptr) {
-                cur->key = next->key;
-                cur->data = next->data;
-                cur->right = next->right;
-            }
-            else{
-                while(next->left != nullptr) {
-                    par = next;
-                    next = next->left;
-                    count++;
-                }
-                cur->key = next->key;
-                cur->data = next->data;
-                par->left = next->right;
-            }
-            delete next;
-        }
+        
+        Node* joined_subtree = join(current->left, current->right);
+        *parent_ptr = joined_subtree;
+        delete current;
+    
         return true;
     }
     void list() {
@@ -199,28 +244,7 @@ public:
 
             prit(node->left, pref + "    ", prit);
         };
-
         prit(root, "", prit);
-    }
-    void print_horizontal() {
-        if (root == nullptr) {
-            cout << "Tree is empty!" << endl;
-            return;
-        }
-
-        int height = get_height(root);
-        int max_level = height - 1;
-        int max_nodes = pow(2, height) - 1;
-        vector<vector<string>> levels(height, vector<string>(max_nodes, "  "));
-
-        fill_levels(root, 0, 0, max_nodes - 1, levels);
-
-        for (int level = 0; level < height; level++) {
-            for (int i = 0; i < levels[level].size(); i++) {
-                cout << levels[level][i];
-            }
-            cout << endl;
-        }
     }
     Node* min(Node* node) {
         Node* min = node;        
@@ -239,7 +263,7 @@ public:
     }
     class Iterator {
     private:
-        Btree* tree = nullptr;
+        RND_Btree* tree = nullptr;
         Node* cur_pos = nullptr;
         Node* get_bigger(Node* cur) {
             if(cur_pos == nullptr) return nullptr;
@@ -273,7 +297,7 @@ public:
         }
     public:
         Iterator() : tree(nullptr), cur_pos(nullptr) {}
-        Iterator(Btree& tr, Node* min_l) : tree(&tr), cur_pos(min_l) {}
+        Iterator(RND_Btree& tr, Node* min_l) : tree(&tr), cur_pos(min_l) {}
         T& operator *() {
             if(cur_pos == nullptr || tree->root == nullptr) throw "Empty exception";
             return cur_pos->data;
@@ -297,7 +321,7 @@ public:
     };
     class Rev_Iterator {
     private:
-        Btree* tree = nullptr;
+        RND_Btree* tree = nullptr;
         Node* cur_pos = nullptr;
         Node* get_bigger(Node* cur) {
             if(cur_pos == nullptr) return nullptr;
@@ -331,7 +355,7 @@ public:
         }
     public:
         Rev_Iterator() : tree(nullptr), cur_pos(nullptr) {}
-        Rev_Iterator(Btree& tr, Node* node) : tree(&tr), cur_pos(node) {}
+        Rev_Iterator(RND_Btree& tr, Node* node) : tree(&tr), cur_pos(node) {}
         T& operator *() {
             if(cur_pos == nullptr || tree->root == nullptr) throw "Empty exception";
             return cur_pos->data;

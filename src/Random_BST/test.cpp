@@ -1,3 +1,4 @@
+#include "rnd_btree.h"
 #include "btree.h"
 #include <time.h>
 #include <math.h>
@@ -21,63 +22,100 @@ INT_64 generate() {
 }
 
 void test(int n) {
-    Btree<INT_64, int> tree;
+    RND_Btree<INT_64, int> tree;
+    Btree<INT_64, int> tree2;
     INT_64* m = new INT_64[n];
     sRand();
 
     for(int i = 0; i < n; i++) {
         m[i] = generate();
         tree.add(m[i], i);
+        tree2.add(m[i], i);
     }
-    cout << "Размер дерева до тестирования: " << tree.get_size() << endl;
+    cout << "Размер рандомизированного дерева до тестирования: " << tree.get_size() << endl;
+    cout << "Размер дерева до тестирования: " << tree2.get_size() << endl;
+
 
     double I = 0, D = 0, S = 0;
+    double I1 = 0, D1 = 0, S1 = 0;
+
 
     for(int i = 0; i < n/2; i++) {
         if(i%10 == 0) {
             tree.del(generate());
+            tree2.del(generate());
             D += tree.count_nodes();
+            D1 += tree2.count_nodes();
             tree.add(m[rand()%n], 1);
+            tree2.add(m[rand()%n], 1);
             I+= tree.count_nodes();
+            I1+= tree2.count_nodes();
+
             try {
                 tree.read(generate());
                 S += tree.count_nodes();
             } catch(...) {S += tree.count_nodes();}
+            try {
+                tree2.read(generate());
+                S1 += tree2.count_nodes();
+            } catch(...) {S1 += tree2.count_nodes();}
         }
         else {
             int ind = rand() % n;
             tree.del(m[ind]);
+            tree2.del(m[ind]);
             D += tree.count_nodes();
+            D1 += tree2.count_nodes();
+
             INT_64 key = generate();
             tree.add(key, 1);
+            tree2.add(key, 1);
+
             I += tree.count_nodes();
+            I1 += tree2.count_nodes();
             m[ind] = key;
             try{
                 tree.read(m[rand()%n]);
                 S += tree.count_nodes();
             } catch(...) {S += tree.count_nodes();}
+            try{
+                tree2.read(m[rand()%n]);
+                S1 += tree2.count_nodes();
+            } catch(...) {S1 += tree2.count_nodes();}
         }
     }
-    cout << "Размер дерева после теста: " << tree.get_size() << endl;
+    cout << "Размер рандомизированного дерева после теста: " << tree.get_size() << endl;
     cout << "1.39*log2(n)=" << 1.39*log((double)n)/log(2.0) << endl;
     cout << "Вставка: " << I/(n/2) << endl;
     cout << "Удаление: " << D/(n/2) << endl;
     cout << "Поиск: " << S/(n/2) << endl;
+
+    cout << "Размер дерева после теста: " << tree2.get_size() << endl;
+    cout << "1.39*log2(n)=" << 1.39*log((double)n)/log(2.0) << endl;
+    cout << "Вставка: " << I1/(n/2) << endl;
+    cout << "Удаление: " << D1/(n/2) << endl;
+    cout << "Поиск: " << S1/(n/2) << endl;
     delete[] m;
 }
 
 void test_ord(int n) {
-    Btree<INT_64, int> tree;
+    RND_Btree<INT_64, int> tree;
+    Btree<INT_64, int> tree2;
 
     INT_64* m = new INT_64[n];
 
     for(int i = 0; i < n; i++) {
         m[i] = i * 10000;
         tree.add(m[i], 1);
+        tree2.add(m[i], 1);
     }
-    cout << "Размер дерева до тестирования: " << tree.get_size() << endl;
+
+    cout << "Размер рандомизированного дерева до тестирования: " << tree.get_size() << endl;
+    cout << "Размер дерева до тестирования: " << tree2.get_size() << endl;
 
     double I = 0, D = 0, S = 0;
+    double I1 = 0, D1 = 0, S1 = 0;
+
 
     sRand();
 
@@ -86,36 +124,62 @@ void test_ord(int n) {
             int key = generate() % (10000*n);
             key += !(key%2);
             tree.del(key);
+            tree2.del(key);
             D += tree.count_nodes();
+            D1 += tree2.count_nodes();
             tree.add(m[rand()%n], 1);
+            tree2.add(m[rand()%n], 1);
             I += tree.count_nodes();
+            I1 += tree2.count_nodes();
             key = generate() % (10000*n);
             key += !(key%2);
             try {
                 tree.read(key);
                 S += tree.count_nodes();
             } catch(...) {S += tree.count_nodes();}
+            try {
+                tree2.read(key);
+                S1 += tree2.count_nodes();
+            } catch(...) {S1 += tree2.count_nodes();}
         }
         else {
             int ind = rand() % n;
             tree.del(m[ind]);
+            tree2.del(m[ind]);
+
             D += tree.count_nodes();
+            D1 += tree2.count_nodes();
+
             int key = generate() % (10000*n);
             key += !(key%2);
             tree.add(key, 1);
+            tree2.add(key, 1);
+
             I += tree.count_nodes();
+            I1 += tree2.count_nodes();
+
             m[ind] = key;
             try {
                 tree.read(m[rand()%n]);
                 S += tree.count_nodes();
             } catch(...) {S += tree.count_nodes();}
+            try {
+                tree2.read(m[rand()%n]);
+                S1 += tree2.count_nodes();
+            } catch(...) {S1 += tree2.count_nodes();}
         }
     }
-    cout << "Размер дерева после теста: " << tree.get_size() << endl;
-    cout << "n/2 = " << n/2 << endl;
+    cout << "Размер рандомизированного дерева после теста: " << tree.get_size() << endl;
+    cout << "1.39*log2(n)=" << 1.39*log((double)n)/log(2.0) << endl;
     cout << "Вставка: " << I/(n/2) << endl;
     cout << "Удаление: " << D/(n/2) << endl;
     cout << "Поиск: " << S/(n/2) << endl;
+
+    cout << "Размер дерева после теста: " << tree2.get_size() << endl;
+    cout << "n/2 = " << n/2 << endl;
+    cout << "Вставка: " << I1/(n/2) << endl;
+    cout << "Удаление: " << D1/(n/2) << endl;
+    cout << "Поиск: " << S1/(n/2) << endl;
     delete[] m;
 }
 
