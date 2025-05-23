@@ -33,13 +33,12 @@ public:
             v = list;
             cur_pos = 0;
         }
-        
         T& operator *() {
             if(cur_pos == v->size || cur_pos == -1) throw "Out of range";
             return v->data[cur_pos];}
 
         Iterator& operator ++() {
-            if(cur_pos == v->size || cur_pos == -1) {
+            if(cur_pos == v->size) {
                 *this = v->end();
                 return *this;
             }
@@ -47,7 +46,7 @@ public:
             return *this;
         }
         Iterator& operator --() {
-            if(cur_pos == 0 || cur_pos == -1) {
+            if(cur_pos == -1) {
                 *this = v->end();
                 return *this;
             }
@@ -68,7 +67,7 @@ public:
         List * v;
         long cur_pos = -1;
     public:
-        Rev_Iterator() : v(NULL), cur_pos(0) {}
+        Rev_Iterator() : v(NULL), cur_pos(-1) {}
         Rev_Iterator(List* list) {
             v = list;
             cur_pos = list->size - 1;
@@ -78,7 +77,7 @@ public:
             return v->data[cur_pos];
         }
         Rev_Iterator& operator ++() {
-            if(cur_pos == 0 || cur_pos == -1) {
+            if(cur_pos == -1) {
                 *this = v->rend();
                 return *this;
             }
@@ -86,7 +85,7 @@ public:
             return *this;
         }
         Rev_Iterator& operator --() {
-            if(cur_pos == v->size || cur_pos == -1) {
+            if(cur_pos == v->size) {
                 *this = v->rend();
                 return *this;
             }
