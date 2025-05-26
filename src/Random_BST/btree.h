@@ -11,7 +11,7 @@ class Btree {
 friend class Iterator;
 friend class Rev_Iterator;
 friend class Node;
-private:
+protected:
     class Node {
         public:
             K key;
@@ -26,7 +26,7 @@ private:
     long count = 0;
 
     Node* cpy(Node* other) {
-        if(other == nullptr) 
+        if(other == nullptr)
             return nullptr;
         Node* new_n = new Node(other->data, other->key);
         new_n->left = cpy(other->left);
@@ -67,7 +67,6 @@ private:
         fill_levels(node->right, level + 1, mid + 1, right, levels);
     }
 public:
-
     Btree() {
         root = NULL;
     }
@@ -109,7 +108,7 @@ public:
         if(tmp == nullptr) throw "Not found exception";
         return tmp->data;
     }
-    bool add(K key, T data) {
+    virtual bool add(K key, T data) {
         count = 0;
         if(root == nullptr) {
             root = new Node(data, key);
@@ -128,7 +127,7 @@ public:
         else prev->right = new Node(data, key);
         return true;
     }
-    bool del(K key) {
+    virtual bool del(K key) {
         count = 0;
         Node* cur = root;
         Node* par = nullptr;
@@ -223,12 +222,12 @@ public:
         }
     }
     Node* min(Node* node) {
-        Node* min = node;        
+        Node* min = node;
         while(min != nullptr && min->left != nullptr) min = min->left;
         return min;
     }
     Node* max(Node* node) {
-        Node* max = node;        
+        Node* max = node;
         while(max != nullptr && max->right != nullptr) max = max->right;
         return max;
     }
@@ -317,6 +316,7 @@ public:
             Node* prev = nullptr;
             Node* cur = tree->root;
             while(cur!= nullptr) {
+                cout << cur->key;
                 if(key > cur->key) {
                     prev = cur;
                     cur = cur->right;

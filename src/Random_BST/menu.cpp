@@ -3,10 +3,9 @@
 #define l1 "1. "
 void list(bool);
 
-
 int main() {
     srand(time(NULL));
-    RND_Btree<int, int> root;
+    RND_Btree<int, int> root; 
     RND_Btree<int, int>::Iterator iterator;
     RND_Btree<int, int>::Rev_Iterator r_iterator;
     bool exit = false, mode = true;
@@ -141,6 +140,8 @@ int main() {
         }
     }
 }
+
+
 
 void list(bool mode) {
     cout << endl <<"___________________________________" << endl;
