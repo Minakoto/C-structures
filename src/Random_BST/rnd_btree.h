@@ -11,15 +11,15 @@ private:
     class R_Node : public Btree<K, T>::Node {
         public:
             long size;
-            R_Node() : Btree<K, T>::Node(), size(1) {}
-            R_Node(T val, K k) : Btree<K, T>::Node(val, k), size(1) {}
+            R_Node() : Btree<K, T>::Node(), size(0) {}
+            R_Node(T val, K k) : Btree<K, T>::Node(val, k), size(0) {}
             long get_size() {
             if(this == nullptr) return 0;
                 return size;
             }
             void fixsize() {
                 this->size = ((R_Node*)this->left)->get_size() + ((R_Node*)this->right)->get_size() + 1;
-            } 
+            }
     };
     R_Node* root_add(R_Node* sub, K key, T data) {
         auto R = [](R_Node* tree)->R_Node* {
@@ -27,8 +27,8 @@ private:
             if(!new_root) return tree;
             tree->left = new_root->right;
             new_root->right = tree;
-            new_root->size = tree->size;
             tree->fixsize();
+            new_root->size = tree->size;
             return new_root;
         };
         auto L = [](R_Node* tree)->R_Node* {
@@ -36,8 +36,8 @@ private:
             if(!new_root) return tree;
             tree->right = new_root->left;
             new_root->left = tree;
-            new_root->size = tree->size;
             tree->fixsize();
+            new_root->size = tree->size;
             return new_root;
         };
         R_Node* new_node = new R_Node(data, key);
@@ -73,7 +73,7 @@ private:
         R_Node** current = &merged;
     
         while (a != nullptr && b != nullptr) {
-            if(rand() % (a->get_size() + b->get_size()) < a->get_size()) {
+            if(rand()/(RAND_MAX/(a->size + b->size + 1)) < a->size) {
                 *current = a;
                 current = (R_Node**) &(a->right);
                 a = (R_Node*) a->right;
@@ -101,11 +101,13 @@ public:
         Btree<K, T>::count = 0;
         R_Node** current = (R_Node**)&(Btree<K, T>::root);
         while (*current != nullptr) {
-            if(rand() % ((*current)->get_size() + 1) == 0) {
+            if (key == (*current)->key) return false;
+
+            if(rand() < RAND_MAX/((*current)->size + 1)) {
                 *current = root_add(*current, key, data);
                 return true;
             }
-            if (key == (*current)->key) return false;
+
             
             if (key < (*current)->key) current = (R_Node**) &((*current)->left);
             else current = (R_Node**) &((*current)->right);
@@ -137,5 +139,22 @@ public:
         *parent_ptr = joined_subtree;
         delete current;
         return true;
+    }
+    virtual void print() {
+        if(Btree<K, T>::root == nullptr) {
+            cout << "Дерево пусто" << endl;
+            return;
+        }
+        cout << endl << endl;
+        auto prit = [](auto node, const string& pref, auto&& prit)->void {
+            if(node == nullptr) return;
+            prit((R_Node*)node->right, pref + "    ", prit);
+            node->fixsize();
+            cout << pref << node->key << "," << node->get_size() << endl;
+
+            prit((R_Node*)node->left, pref + "    ", prit);
+        };
+
+        prit((R_Node*)Btree<K, T>::root, "", prit);
     }
 };

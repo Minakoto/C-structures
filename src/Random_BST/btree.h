@@ -180,7 +180,7 @@ public:
         list_sub(root);
         cout << endl;
     }
-    void print() {
+    virtual void print() {
         if(root == nullptr) {
             cout << "Дерево пусто" << endl;
             return;
@@ -203,7 +203,7 @@ public:
     }
     void print_horizontal() {
         if (root == nullptr) {
-            cout << "Tree is empty!" << endl;
+            cout << "Дерево пусто" << endl;
             return;
         }
 
