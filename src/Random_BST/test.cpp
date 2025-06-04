@@ -2,6 +2,7 @@
 // #include "btree.h"
 #include <time.h>
 #include <math.h>
+#include <fstream>
 
 typedef unsigned long long INT_64;
 
@@ -22,6 +23,12 @@ INT_64 generate() {
 }
 
 void test(int n) {
+
+    ofstream my_file, mf2;
+    mf2.open("rndres.txt", ios_base::app);
+    my_file.open("rndrnd.txt", ios_base::app);
+
+
     RND_Btree<INT_64, int> tree;
     Btree<INT_64, int> tree2;
     INT_64* m = new INT_64[n];
@@ -84,6 +91,8 @@ void test(int n) {
             } catch(...) {S1 += tree2.count_nodes();}
         }
     }
+
+
     cout << "Размер рандомизированного дерева после теста: " << tree.get_size() << endl;
     cout << "1.39*log2(n)=" << 1.39*log((double)n)/log(2.0) << endl;
     cout << "Вставка: " << I/(n/2) << endl;
@@ -96,9 +105,22 @@ void test(int n) {
     cout << "Удаление: " << D1/(n/2) << endl;
     cout << "Поиск: " << S1/(n/2) << endl;
     delete[] m;
+
+    my_file << I/(n/2) << "\t" << D/(n/2) << "\t" << S/(n/2) << endl;
+    mf2 << I1/(n/2) << "\t" << D1/(n/2) << "\t" << S1/(n/2) << endl;
+
+    mf2.close();
+    my_file.close();
+
 }
 
 void test_ord(int n) {
+
+
+    ofstream my_file, mf2;
+    mf2.open("ordres.txt", ios_base::app);
+    my_file.open("ord_rnd.txt", ios_base::app);
+
     RND_Btree<INT_64, int> tree;
     Btree<INT_64, int> tree2;
 
@@ -181,6 +203,12 @@ void test_ord(int n) {
     cout << "Удаление: " << D1/(n/2) << endl;
     cout << "Поиск: " << S1/(n/2) << endl;
     delete[] m;
+
+    my_file << I/(n/2) << "\t" << D/(n/2) << "\t" << S/(n/2) << endl;
+    mf2 << I1/(n/2) << "\t" << D1/(n/2) << "\t" << S1/(n/2) << endl;
+
+    mf2.close();
+    my_file.close();
 }
 
 int main(int argc, char* argv[]) {
