@@ -1,6 +1,7 @@
 #include "btree.h"
 #include <time.h>
 #include <math.h>
+#include <fstream>
 
 typedef unsigned long long INT_64;
 
@@ -21,6 +22,10 @@ INT_64 generate() {
 }
 
 void test(int n) {
+
+    ofstream my_file;
+    my_file.open("rndres.txt", ios_base::app);
+
     Btree<INT_64, int> tree;
     INT_64* m = new INT_64[n];
     sRand();
@@ -64,10 +69,18 @@ void test(int n) {
     cout << "Удаление: " << D/(n/2) << endl;
     cout << "Поиск: " << S/(n/2) << endl;
     delete[] m;
+
+    my_file << "len: " << tree.get_size() << endl;
+    my_file << I/(n/2) << "\t" << D/(n/2) << "\t" << S/(n/2) << endl;
+
+    my_file.close();
 }
 
 void test_ord(int n) {
     Btree<INT_64, int> tree;
+
+    ofstream my_file;
+    my_file.open("virres.txt", ios_base::app);
 
     INT_64* m = new INT_64[n];
 
@@ -117,6 +130,13 @@ void test_ord(int n) {
     cout << "Удаление: " << D/(n/2) << endl;
     cout << "Поиск: " << S/(n/2) << endl;
     delete[] m;
+
+
+    my_file << "len: " << tree.get_size() << endl;
+
+    my_file << I/(n/2) << "\t" << D/(n/2) << "\t" << S/(n/2) << endl;
+
+    my_file.close();
 }
 
 int main(int argc, char* argv[]) {
@@ -124,11 +144,14 @@ int main(int argc, char* argv[]) {
     if(argc > 1) num = atoi(argv[1]);
     else num =100 + rand() % (100000 - 100);
 
-    cout << "Случайное дерево" << endl << "_____________________" << endl;
-    test(num);
-    cout <<  "_____________________" << endl <<  "\nВырожденное дерево" << endl << "_____________________" << endl;
-    test_ord(num);
+    // cout << "Случайное дерево" << endl << "_____________________" << endl;
+    // test(num);
+    // cout <<  "_____________________" << endl <<  "\nВырожденное дерево" << endl << "_____________________" << endl;
+    // test_ord(num);
 
-
+    for(int i = 50; i < 5000; i+=50) {
+        test(i);
+        test_ord(i);
+    }
 }
 
