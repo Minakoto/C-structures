@@ -25,6 +25,7 @@ SimpleGraph<DATA, NAME, WEIGHT>::SimpleGraph(int _VCount, bool _D, bool _F) {
         graphForm->getVertexVector().push_back(new VertexT());
         graphForm->getVertexVector()[i]->setName(to_string(i));
         graphForm->getVertexVector()[i]->setInd(i);
+        graphForm->getVertexVector()[i]->setData(i+10);
     }
 }
 
@@ -129,13 +130,23 @@ Vertex<DATA, NAME> *SimpleGraph<DATA, NAME, WEIGHT>::insertV(NAME name) {
 
 template<typename DATA, typename NAME, typename WEIGHT>
 void SimpleGraph<DATA, NAME, WEIGHT>::switchForm(GraphForm<DATA, NAME, WEIGHT> *newForm) {
+    // Copy vertices and their data
     for (int i = 0; i < graphForm->getVertexVector().size(); ++i) {
-        newForm->insertV(graphForm->getVertexVector()[i]->getInd());
+        VertexT* oldVertex = graphForm->getVertexVector()[i];
+        // Create new vertex with same data
+        VertexT* newVertex = new VertexT(*oldVertex);  // Copy construct vertex
+        newForm->getVertexVector().push_back(newVertex);
+        newForm->insertV(newVertex->getInd());
     }
-    int v1, v2;
+    
+    // Copy edges using vertices from new form
     for (auto it = eBegin(); it != eEnd(); it++) {
-        newForm->insertE((*it)->getV1(), (*it)->getV2());
+        int v1Idx = (*it)->getV1()->getInd();
+        int v2Idx = (*it)->getV2()->getInd();
+        newForm->insertE(newForm->getVertexVector()[v1Idx], 
+                        newForm->getVertexVector()[v2Idx]);
     }
+    
     delete graphForm;
     graphForm = newForm;
 }

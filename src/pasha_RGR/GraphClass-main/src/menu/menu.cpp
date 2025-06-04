@@ -11,18 +11,19 @@ void printFillMenu() {
     int v1Ind, v2Ind;
     string vertexName;
     
-    while (command != 8) {
+    while (command != 9) {
         cout << "\n=== МЕНЮ ЗАПОЛНЕНИЯ ГРАФА ===\n\n";
         cout <<  "Выберите действие:\n";
         cout <<  "0) Создать пустой граф\n";
-        cout <<  "1) Заполнить случайными значениями\n";
-        cout <<  "2) Вставить вершину\n";
-        cout <<  "3) Вставить вершину с указанием имени\n";
-        cout <<  "4) Удалить вершину\n";
-        cout <<  "5) Вставить ребро (без веса)\n";
-        cout <<  "6) Вставить ребро с указанием веса\n";
-        cout <<  "7) Удалить ребро\n";
-        cout <<  "8) Вернуться в главное меню\n\n";
+        cout <<  "1) Создать граф с вершинами без ребер\n";
+        cout <<  "2) Заполнить случайными значениями\n";
+        cout <<  "3) Вставить вершину\n";
+        cout <<  "4) Вставить вершину с указанием имени\n";
+        cout <<  "5) Удалить вершину\n";
+        cout <<  "6) Вставить ребро (без веса)\n";
+        cout <<  "7) Вставить ребро с указанием веса\n";
+        cout <<  "8) Удалить ребро\n";
+        cout <<  "9) Вернуться в главное меню\n\n";
                
         if (scanf("%d", &command) != 1) {
             while (getchar() != '\n') {}
@@ -42,6 +43,19 @@ void printFillMenu() {
                     cout << "0\n";
                 } else {
                     cin >> vCount;
+                    cout << "1 - ориент, 0 - неориент: ";
+                    cin >> dir;
+                    cout << "1 - матрица, 0 - список: ";
+                    cin >> den;
+                    graph = new SimpleGraph<int, string, int>(vCount, dir, den);
+                    cout << "1\n";
+                }
+            break;
+            case 2:
+                if (graph) {
+                    cout << "0\n";
+                } else {
+                    cin >> vCount;
                     cin >> eCount;
                     cout << "1 - ориент, 0 - неориент: ";
                     cin >> dir;
@@ -52,7 +66,7 @@ void printFillMenu() {
                 }
                 break;
                 
-            case 2:
+            case 3:
                 if (graph) {
                     graph->insertV();
                     cout << "1\n";
@@ -61,7 +75,7 @@ void printFillMenu() {
                 }
                 break;
                 
-            case 3:
+            case 4:
                 if (graph) {
                     cin >> vertexName;
                     graph->insertV(vertexName);
@@ -71,7 +85,7 @@ void printFillMenu() {
                 }
                 break;
                 
-            case 4:
+            case 5:
                 if (graph) {
                     cin >> v1Ind;
                     v1.setInd(v1Ind);
@@ -82,7 +96,7 @@ void printFillMenu() {
                 }
                 break;
                 
-            case 5:
+            case 6:
             if (graph) {
                 cin >> v1Ind;
                 cin >> v2Ind;
@@ -95,7 +109,7 @@ void printFillMenu() {
             }
                 break;
                 
-            case 6:
+            case 7:
                 if (graph) {
                     cin >> v1Ind;
                     cin >> v2Ind;
@@ -114,7 +128,7 @@ void printFillMenu() {
                 }
                 break;
                 
-            case 7:
+            case 8:
             if (graph) {
                 cin >> v1Ind;
                 cin >> v2Ind;

@@ -199,7 +199,7 @@ void LGraph<DATA, NAME, WEIGHT>::print() {
     while (vtmp) {
         VertexT* vertex = this->vertexVector[vtmp->v_ind];
         
-        cout << "*" << vtmp->v_ind << " [" << "]";
+        cout << "*" << vtmp->v_ind << " [" << vertex->getName() << "]";
         etmp = vtmp->eNode;
         while (etmp) {
             cout  << "->" << etmp->e->getV2()->getInd() << "," << etmp->e->getW() << "," << etmp->e->getData();
