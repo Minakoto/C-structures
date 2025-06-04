@@ -1,0 +1,357 @@
+#include "menu.h"
+
+extern SimpleGraph<int, string, int> *graph;
+
+void printFillMenu() {
+    int command = -1;
+    int vCount, eCount, weight;
+    bool dir, den;
+    Vertex<int, string> v1, v2;
+    Edge<int, string, int> *e;
+    int v1Ind, v2Ind;
+    string vertexName;
+    
+    while (command != 8) {
+        cout << "\n=== МЕНЮ ЗАПОЛНЕНИЯ ГРАФА ===\n\n";
+        cout <<  "Выберите действие:\n";
+        cout <<  "0) Создать пустой граф\n";
+        cout <<  "1) Заполнить случайными значениями\n";
+        cout <<  "2) Вставить вершину\n";
+        cout <<  "3) Вставить вершину с указанием имени\n";
+        cout <<  "4) Удалить вершину\n";
+        cout <<  "5) Вставить ребро (без веса)\n";
+        cout <<  "6) Вставить ребро с указанием веса\n";
+        cout <<  "7) Удалить ребро\n";
+        cout <<  "8) Вернуться в главное меню\n\n";
+               
+        if (scanf("%d", &command) != 1) {
+            while (getchar() != '\n') {}
+        }
+        
+        switch (command) {
+            case 0:
+                if (graph) {
+                    cout << "0\n";
+                } else {
+                    graph = new SimpleGraph<int, string, int>();
+                    cout << "1\n";
+                }
+                break;
+            case 1:
+                if (graph) {
+                    cout << "0\n";
+                } else {
+                    cin >> vCount;
+                    cin >> eCount;
+                    cout << "1 - ориент, 0 - неориент: ";
+                    cin >> dir;
+                    cout << "1 - матрица, 0 - список: ";
+                    cin >> den;
+                    graph = new SimpleGraph<int, string, int>(vCount, eCount, dir, den);
+                    cout << "1\n";
+                }
+                break;
+                
+            case 2:
+                if (graph) {
+                    graph->insertV();
+                    cout << "1\n";
+                } else {
+                    cout << "0\n";
+                }
+                break;
+                
+            case 3:
+                if (graph) {
+                    cin >> vertexName;
+                    graph->insertV(vertexName);
+                    cout << "1\n" ;
+                } else {
+                    cout << "0\n";
+                }
+                break;
+                
+            case 4:
+                if (graph) {
+                    cin >> v1Ind;
+                    v1.setInd(v1Ind);
+                    graph->deleteV(&v1);
+                    cout << "1\n";
+                } else {
+                    cout << "0\n";
+                }
+                break;
+                
+            case 5:
+            if (graph) {
+                cin >> v1Ind;
+                cin >> v2Ind;
+                v1.setInd(v1Ind);
+                v2.setInd(v2Ind);
+                graph->insertE(&v1, &v2);
+                cout << "1\n";
+            } else {
+                cout << "0\n";
+            }
+                break;
+                
+            case 6:
+                if (graph) {
+                    cin >> v1Ind;
+                    cin >> v2Ind;
+                    cin >> weight;
+                    if (v1Ind >= 0 && v1Ind < graph->getV() && 
+                        v2Ind >= 0 && v2Ind < graph->getV()) {
+                        v1.setInd(v1Ind);
+                        v2.setInd(v2Ind);
+                        graph->insertE(&v1, &v2, weight);
+                        cout << weight;
+                    } else {
+                        cout << "0\n";
+                    }
+                } else {
+                    cout << "0\n";
+                }
+                break;
+                
+            case 7:
+            if (graph) {
+                cin >> v1Ind;
+                cin >> v2Ind;
+                
+                if (v1Ind >= 0 && v1Ind < graph->getV() && v2Ind >= 0 && v2Ind < graph->getV()) {
+                    Edge<int, string, int>* edge = graph->getEdge(v1Ind, v2Ind);
+                    if (edge) {
+                        if (graph->deleteE(edge)) {
+                            cout << "1\n";
+                        } else {
+                            cout << "0\n";
+                        }
+                    } else {
+                        cout << "0\n";
+                    }
+                    if (graph->isDirected() == false)
+                    {
+                    Edge<int, string, int>* edge2 = graph->getEdge(v2Ind, v1Ind);
+                    if (edge2) {
+                        if (graph->deleteE(edge2)) {
+                            cout << "1!\n";
+                        } else {
+                            cout << "0\n";
+                        }
+                    } else {
+                        cout << "0\n";
+                    }
+                    }
+                } else {
+                    cout << "0\n";
+                }
+            } else {
+                cout << "0\n";
+            }
+                
+            default:
+                break;
+        }
+    }
+}
+
+void iteratorsMenu() {
+    int command = -1;
+    while (command != 4) {
+        printf("Выберите действие:\n"
+               "1) Итератор вершин.\n"
+               "2) Итератор ребер.\n"
+               "3) Итератор исходящих ребер.\n"
+               "4) Вернуться в меню.\n");
+        if (scanf("%d", &command) != 1) {
+            while (getchar() != '\n') {}
+        }
+        switch (command) {
+            case 1:
+                vertexIteratorMenu();
+                return;
+            case 2:
+                edgeIteratorMenu();
+                break;
+            case 3:
+                int v;
+                cin >> v;
+                if (!(v < 0 || v >= graph->getV()))
+                    inputEdgeIteratorMenu(v);
+                break;
+            default:
+                break;
+        }
+    }
+}
+
+void vertexIteratorMenu() {
+    int command = -1;
+    vector<Vertex<int, string> *> vertexVector;
+    VertexIterator<int, string, int> iter = VertexIterator<int, string, int>(vertexVector, -1);
+    VertexIterator<int, string, int> end = VertexIterator<int, string, int>(vertexVector, -1);
+
+    while (command != 5) {
+        printf("Выберите действие:\n"
+               "1) Установить итератор в начало графа\n"
+               "2) Переместить итератор вперед (++)\n"
+               "3) Получить текущий элемент\n"
+               "4) Вывести все ключи\n"
+               "5) Вернуться в главное меню\n");
+        if (scanf("%d", &command) != 1) {
+            while (getchar() != '\n') {}
+        }
+        switch (command) {
+            case 1:
+                iter = graph->vBegin();
+                cout << "1\n";
+                break;
+            case 2:
+                if (iter != end) {
+                    iter++;
+                } else {
+                    std::cout << "0" << std::endl;
+                }
+                break;
+            case 3:
+                if (iter != end) {
+                    std::cout << *iter << std::endl;
+                } else {
+                    std::cout << "0\n";
+                }
+                break;
+            case 4:
+                for (auto it = graph->vBegin(); it != graph->vEnd(); it++) {
+                    std::cout << *it << " ";
+                }
+                std::cout << std::endl;
+                break;
+            default:
+                break;
+        }
+    }
+}
+
+    void edgeIteratorMenu() {
+        int command = -1;
+        EdgeIterator<int, string, int> iter = EdgeIterator<int, string, int>(nullptr, -1);
+        EdgeIterator<int, string, int> end = EdgeIterator<int, string, int>(nullptr, -1);
+
+        while (command != 4) {
+            printf("Выберите действие:\n"
+                "1) Установить итератор в начало графа\n"
+                "2) Переместить итератор вперед (++)\n"
+                "3) Получить текущий элемент\n"
+                "4) Вернуться в главное меню\n");
+            if (scanf("%d", &command) != 1) {
+                while (getchar() != '\n') {}
+            }
+            switch (command) {
+                case 1:
+                    iter = graph->eBegin();
+                    break;
+                case 2:
+                    if (iter != end) {
+                        iter++;
+                    } else {
+                        std::cout << "0" << std::endl;
+                    }
+                    break;
+                case 3:
+                    if (iter != end) {
+                        Edge<int, string, int>* edge = *iter;
+                        std::cout << edge->getV1()->getInd() << std::endl;
+                        std::cout << edge->getV2()->getInd() << std::endl;
+                    } else {
+                        std::cout << "0" << std::endl;
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+void inputEdgeIteratorMenu(int v) {
+    int command = -1;
+    EdgeIterator<int, string, int> iter = EdgeIterator<int, string, int>(nullptr, -1);
+    EdgeIterator<int, string, int> end = EdgeIterator<int, string, int>(nullptr, -1);
+
+    while (command != 5) {
+        printf("Выберите действие:\n"
+               "1) Установить итератор в начало графа\n"
+               "2) Переместить итератор вперед (++)\n"
+               "3) Получить текущий элемент\n"
+               "4) Вывести все ключи\n"
+               "5) Вернуться в главное меню\n");
+        if (scanf("%d", &command) != 1) {
+            while (getchar() != '\n') {}
+        }
+        switch (command) {
+            case 1:
+                iter = graph->adjEBegin(v);
+                break;
+            case 2:
+                if (iter != end) {
+                    iter++;
+                } else {
+                    std::cout << "0" << std::endl;
+                }
+                break;
+            case 3:
+                if (iter != end) {
+                    std::cout << (*iter)->getData() << std::endl;
+                } else {
+                    std::cout << "0" << std::endl;
+                }
+                break;
+            case 4:
+                for (auto it = graph->adjEBegin(v); it != graph->adjEEnd(v); it++) {
+                    std::cout << (*it)->getData() << " ";
+                }
+                std::cout << std::endl;
+                break;
+            default:
+                break;
+        }
+    }
+}
+
+void task2Menu() {
+    if (!graph) {
+        cout << "Граф не инициализирован\n";
+        return;
+    }
+
+    int length, start;
+    cout << "Введите длину цикла для поиска: ";
+    cin >> length;
+    cout << "Введите начальную вершину: ";
+    cin >> start;
+
+    try {
+        CycleFinder<int, string> finder(graph, length, start);
+        auto cycles = finder.result();
+        if (cycles.empty()) {
+            cout << "Циклы длины " << length << " из вершины " << start << " не найдены\n";
+        } else {
+            cout << "Найдено циклов: " << cycles.size() << endl;
+            for (const auto& cycle : cycles) {
+                for (int v : cycle) {
+                    cout << v << " ";
+                }
+                cout << endl;
+            }
+        }
+    } catch (const std::exception& e) {
+        cout << "Ошибка: " << e.what() << endl;
+    }
+}
+
+void task3Menu() {
+    Task3<int, string, int> task3(graph);
+    cout << "Task 3. Get diameter of the graph and print path" << endl;
+    cout << "Result " << task3.result() << endl;
+    cout << "Path: " << task3.getPath();
+}
