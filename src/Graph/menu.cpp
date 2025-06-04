@@ -1,5 +1,5 @@
-#include "Task2.h"
 #include "Task3.h"
+// #include "Task2.h"
 // #include <iostream>
 // using namespace std;
 
@@ -17,7 +17,7 @@ int main() {
     Edge<int, string, int> *e;
     int v1Ind, v2Ind;
   int command = -1;
-  while (command != 13) {
+  while (command != 14) {
     printf("\tМеню\n"
            "1) Работа с графом\n"
            "2) Кол-во вершин.\n"
@@ -30,9 +30,10 @@ int main() {
            "9) Вывод графа\n"
            "10) Работа с итераторами\n"
            "11) Получить значение на вершине\n"
-           "12) Кратчайшее расстояние между парами всеми вершин (Задание 2)\n"
-           "13) Exit.\n"
-           ":");
+           "12) Кратчайшее расстояние между парами всеми вершин невзвешанного графа(Задание 2)\n"
+           "13) Кратчайшее расстояние между парами всеми вершин взвешанного графа (Задание )\n"
+           "14) Выход\n"
+           "Действие:");
     scanf("%d", &command);
     switch (command) {
     case 1:
@@ -332,22 +333,29 @@ void oeitm(int v) {
 }
 
 void t2m() {
-    Task2<int, string, int> task2(graph);
-    auto rst = task2.result();
-    cout << "Result:" << endl;
-    for(int j = 0; j < graph->V(); j++) {
-      for (int i = 0; i < graph->V() - 1; i++) {
-        if(rst[j][i] != -1)  {
-          cout << j << "::" << i << " - " << rst[j][i] << "\n";
-        }
+  Task2<int, string, int> task2(graph);
+  auto rst = task2.result();
+  cout << "Result:" << endl;
+  for(int j = 0; j < graph->V(); j++) {
+    for (int i = 0; i < graph->V() - 1; i++) {
+      if(rst[j][i] != -1)  {
+        cout << j << "::" << i << " - " << rst[j][i] << "\n";
       }
-      cout << endl;
     }
+    cout << endl;
+  }
 }
 
 void t3m() {
-    // Task3<int, string, int> task3(graph);
-    // cout << "Task 3. Get diameter of the graph and print path" << endl;
-    // cout << "Result " << task3.result() << endl;
-    // cout << "Path: " << task3.getPath();
+  Task3<int, string, int> task3(graph);
+  // auto rst = task3.result();
+  // cout << "Result:" << endl;
+  // for(int j = 0; j < graph->V(); j++) {
+  //   for (int i = 0; i < graph->V() - 1; i++) {
+  //     if(rst[j][i] != -1)  {
+  //       cout << j << "::" << i << " - " << rst[j][i] << "\n";
+  //     }
+  //   }
+  //   cout << endl;
+  // }
 }
