@@ -165,7 +165,7 @@ public:
             cout << "*" << vtmp->v_ind << "->";
             etmp = vtmp->eNode;
             while (etmp) {
-                cout << etmp->e->getV2()->getInd();
+                cout << etmp->e->getV2()->getInd()  << ":" << etmp->e->getW();
                 etmp = etmp->next;
                 if(etmp) cout << "->";
             }
