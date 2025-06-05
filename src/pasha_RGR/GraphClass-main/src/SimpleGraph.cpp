@@ -130,22 +130,49 @@ Vertex<DATA, NAME> *SimpleGraph<DATA, NAME, WEIGHT>::insertV(NAME name) {
 
 template<typename DATA, typename NAME, typename WEIGHT>
 void SimpleGraph<DATA, NAME, WEIGHT>::switchForm(GraphForm<DATA, NAME, WEIGHT> *newForm) {
-    // Copy vertices and their data
-    for (int i = 0; i < graphForm->getVertexVector().size(); ++i) {
-        VertexT* oldVertex = graphForm->getVertexVector()[i];
-        // Create new vertex with same data
-        VertexT* newVertex = new VertexT(*oldVertex);  // Copy construct vertex
+    // First, create a mapping of old vertices to new vertices
+    vector<VertexT*>& oldVertices = graphForm->getVertexVector();
+    
+    // Copy vertices while preserving indices
+    for (size_t i = 0; i < oldVertices.size(); ++i) {
+        VertexT* oldVertex = oldVertices[i];
+        // Create new vertex with exact same properties
+        VertexT* newVertex = new VertexT();
+        newVertex->setInd(oldVertex->getInd());
+        newVertex->setName(oldVertex->getName());
+        newVertex->setData(oldVertex->getData());
+        // Add to new graph's vertex vector
         newForm->getVertexVector().push_back(newVertex);
+
         newForm->insertV(newVertex->getInd());
     }
-    
-    // Copy edges using vertices from new form
-    for (auto it = eBegin(); it != eEnd(); it++) {
-        int v1Idx = (*it)->getV1()->getInd();
-        int v2Idx = (*it)->getV2()->getInd();
-        newForm->insertE(newForm->getVertexVector()[v1Idx], 
-                        newForm->getVertexVector()[v2Idx]);
+
+    ECount = 0;
+
+    vector<Edge<DATA, NAME, WEIGHT>*>* oldEdges = graphForm->getEdgeVector();
+    if (oldEdges) {
+        for (EdgeT* oldEdge : *oldEdges) {
+            if (!oldEdge) continue;
+            
+            int v1Idx = oldEdge->getV1()->getInd();
+            int v2Idx = oldEdge->getV2()->getInd();
+            
+            // Get corresponding vertices from new form
+            VertexT* newV1 = newForm->getVertexVector()[v1Idx];
+            VertexT* newV2 = newForm->getVertexVector()[v2Idx];
+            
+            // Create edge with same properties
+            EdgeT* newEdge = newForm->insertE(newV1, newV2, oldEdge->getW());
+            if (newEdge) {
+                newEdge->setData(oldEdge->getData());
+                ECount++;
+            }
+        }
+        delete oldEdges;
     }
+    
+    // Set directed property
+    newForm->setDirected(D);
     
     delete graphForm;
     graphForm = newForm;

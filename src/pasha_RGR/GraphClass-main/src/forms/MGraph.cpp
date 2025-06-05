@@ -69,22 +69,50 @@ bool MGraph<DATA, NAME, WEIGHT>::deleteE(EdgeT *e) {
 
 template<typename DATA, typename NAME, typename WEIGHT>
 bool MGraph<DATA, NAME, WEIGHT>::deleteV(int v) {
-    for (int i = 0; i < size; ++i) {
-        if (i == v) {
-            for (int j = 0; j < size; ++j) { // clear row
-                delete matrix[i][j];
-                matrix[i][j] = nullptr;
-            }
-            for (int j = 0; j < size; ++j) {  // clear and move column
-                if (j != i) {
-                    delete matrix[j][i];
-                    matrix[j][i] = nullptr;
-                }
-            }
-            return true;
+    if (v < 0 || v >= size) return false;
+
+    // Delete all edges connected to this vertex
+    for (int j = 0; j < size; ++j) {
+        delete matrix[v][j];  // Delete row
+        delete matrix[j][v];  // Delete column
+    }
+
+    // Shift rows up
+    for (int i = v; i < size - 1; ++i) {
+        for (int j = 0; j < size; ++j) {
+            matrix[i][j] = matrix[i + 1][j];
         }
     }
-    return false;
+
+    // Shift columns left
+    for (int i = 0; i < size; ++i) {
+        for (int j = v; j < size - 1; ++j) {
+            matrix[i][j] = matrix[i][j + 1];
+        }
+    }
+
+    // Update vertex indices in edges
+    for (int i = 0; i < size - 1; ++i) {
+        for (int j = 0; j < size - 1; ++j) {
+            if (matrix[i][j]) {
+                if (matrix[i][j]->getV1()->getInd() > v) {
+                    matrix[i][j]->getV1()->setInd(matrix[i][j]->getV1()->getInd() - 1);
+                }
+                if (matrix[i][j]->getV2()->getInd() > v) {
+                    matrix[i][j]->getV2()->setInd(matrix[i][j]->getV2()->getInd() - 1);
+                }
+            }
+        }
+    }
+
+    // Shrink matrix
+    size--;
+    matrix.resize(size);
+    for (int i = 0; i < size; ++i) {
+        matrix[i].resize(size);
+    }
+
+    return true;
 }
 
 template<typename DATA, typename NAME, typename WEIGHT>
