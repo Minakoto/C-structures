@@ -31,7 +31,7 @@ int main() {
            "10) Работа с итераторами\n"
            "11) Получить значение на вершине\n"
            "12) Кратчайшее расстояние между парами всеми вершин невзвешанного графа(Задание 2)\n"
-           "13) Кратчайшее расстояние между парами всеми вершин взвешанного графа (Задание )\n"
+           "13) Кратчайшее расстояние между парами всеми вершин взвешанного графа (Задание 3)\n"
            "14) Выход\n"
            "Действие:");
     scanf("%d", &command);
@@ -339,7 +339,7 @@ void t2m() {
   for(int j = 0; j < graph->V(); j++) {
     for (int i = 0; i < graph->V() - 1; i++) {
       if(rst[j][i] != -1)  {
-        cout << j << "::" << i << " - " << rst[j][i] << "\n";
+        cout << j << "->" << i << " :: " << rst[j][i] << "\n";
       }
     }
     cout << endl;
@@ -348,14 +348,14 @@ void t2m() {
 
 void t3m() {
   Task3<int, string, int> task3(graph);
-  // auto rst = task3.result();
-  // cout << "Result:" << endl;
-  // for(int j = 0; j < graph->V(); j++) {
-  //   for (int i = 0; i < graph->V() - 1; i++) {
-  //     if(rst[j][i] != -1)  {
-  //       cout << j << "::" << i << " - " << rst[j][i] << "\n";
-  //     }
-  //   }
-  //   cout << endl;
-  // }
+  auto rst = task3.result();
+  cout << "Result:" << endl;
+  for(int j = 0; j < graph->V(); j++) {
+    for (int i = 0; i < graph->V() - 1; i++) {
+      if(rst[j][i] != numeric_limits<int>::max())  {
+        cout << j << "->" << i << " :: " << rst[j][i] << "\n";
+      }
+    }
+    cout << endl;
+  }
 }
