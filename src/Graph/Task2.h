@@ -8,9 +8,7 @@ template<typename DATA, typename NAME, typename WD>
 class Task2 {
     private:
     Graph<DATA, NAME, WD> *G;
-    bool OK;
     vector<vector<int>> res;
-    int cnt = 0;
 
 void BFS(Vertex<DATA, NAME>* start) {
     if (!G->V()) return;
@@ -49,7 +47,7 @@ public:
         restart();
     }
     Task2(Task2 &o) : G(o.G) { restart(); } 
-    ~Task2() {}
+    ~Task2() {res.clear();}
     void set(Graph<DATA, NAME, WD> *g) { G = g; }
     void restart() {
         for(auto it = G->vBegin(); it != G->vEnd(); ++it) BFS(*it);
