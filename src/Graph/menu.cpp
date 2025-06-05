@@ -164,7 +164,6 @@ void printFillMenu() {
         v1->setInd(v1Ind);
         v2->setInd(v2Ind);
         cout << graph->insertE(v1, v2, weight)->getW() << endl;
-        
       break;
     case 7:
       cout << "Введите индекс вершины: ";

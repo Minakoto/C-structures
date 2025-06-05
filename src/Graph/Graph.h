@@ -126,8 +126,14 @@ public:
         }
         return false;
     }
-    edge *insertE(vertex *i, vertex *j) { return graphForm->insertE(i, j); }
-    edge *insertE(vertex *i, vertex *j, WD w) { return graphForm->insertE(i, j, w); }
+    edge *insertE(vertex *i, vertex *j) {
+        Ecnt++;
+        return graphForm->insertE(i, j);
+    }
+    edge *insertE(vertex *i, vertex *j, WD w) {
+        Ecnt++;
+        return graphForm->insertE(i, j, w);
+    }
     bool deleteE(vertex* v1, vertex* v2) { return graphForm->deleteE(v1, v2); }
     edge *getEdge(int v1, int v2) { return graphForm->getEdge(v1, v2); }
     void printGraph() { graphForm->print(); }
