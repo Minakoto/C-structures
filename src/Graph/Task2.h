@@ -47,7 +47,7 @@ public:
         restart();
     }
     Task2(Task2 &o) : G(o.G) { restart(); } 
-    ~Task2() {}
+    ~Task2() {res.clear();}
     void set(Graph<DATA, NAME, WD> *g) { G = g; }
     void restart() {
         for(auto it = G->vBegin(); it != G->vEnd(); ++it) BFS(*it);
