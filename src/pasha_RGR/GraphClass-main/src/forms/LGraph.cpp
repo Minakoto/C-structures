@@ -7,16 +7,23 @@ LGraph<DATA, NAME, WEIGHT>::LGraph(unsigned _size, bool _directed) {
     list = nullptr;
     vertexVector.clear();  // Ensure vector is empty
     
-    // Create vertices in correct order (0 to size-1)
+    // Create vertices in correct order (size-1 to 0)
+    VNode* lastNode = nullptr;
     for (int i = 0; i < size; ++i) {
-        VNode* newNode = new VNode(i, nullptr, list);
-        list = newNode;
-        
-        // Initialize vertex in vector
+        // Create vertex in vector first
         VertexT* vertex = new VertexT();
         vertex->setInd(i);
         vertex->setName(to_string(i));
         vertexVector.push_back(vertex);
+        
+        // Create list node
+        VNode* newNode = new VNode(i, nullptr, nullptr);
+        if (!list) {
+            list = newNode;
+        } else {
+            lastNode->next = newNode;
+        }
+        lastNode = newNode;
     }
     
     edgeVector = new vector<Edge<DATA, NAME, WEIGHT> *>();
@@ -36,13 +43,25 @@ void LGraph<DATA, NAME, WEIGHT>::insertV(int v) {
     
     // Check if vertex already exists in list
     VNode *vtmp = list;
-    while (vtmp) {
-        if (vtmp->v_ind == v) return;
+    VNode *prev = nullptr;
+    
+    while (vtmp && vtmp->v_ind < v) {
+        prev = vtmp;
         vtmp = vtmp->next;
     }
     
-    // Add new vertex to front of list
-    list = new VNode(v, nullptr, list);
+    // If vertex already exists, return
+    if (vtmp && vtmp->v_ind == v) return;
+    
+    // Create new vertex node
+    VNode* newNode = new VNode(v, nullptr, vtmp);
+    
+    // Insert at correct position
+    if (!prev) {
+        list = newNode;
+    } else {
+        prev->next = newNode;
+    }
 }
 
 template<typename DATA, typename NAME, typename WEIGHT>

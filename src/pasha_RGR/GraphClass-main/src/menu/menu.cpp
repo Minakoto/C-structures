@@ -144,19 +144,6 @@ void printFillMenu() {
                     } else {
                         cout << "0\n";
                     }
-                    if (graph->isDirected() == false)
-                    {
-                    Edge<int, string, int>* edge2 = graph->getEdge(v2Ind, v1Ind);
-                    if (edge2) {
-                        if (graph->deleteE(edge2)) {
-                            cout << "1!\n";
-                        } else {
-                            cout << "0\n";
-                        }
-                    } else {
-                        cout << "0\n";
-                    }
-                    }
                 } else {
                     cout << "0\n";
                 }
@@ -334,14 +321,11 @@ void inputEdgeIteratorMenu(int v) {
 
 void task2Menu() {
     if (!graph) {
-        cout << "Граф не инициализирован\n";
+        cout << "0\n";
         return;
     }
-
     int length, start;
-    cout << "Введите длину цикла для поиска: ";
     cin >> length;
-    cout << "Введите начальную вершину: ";
     cin >> start;
 
     try {
@@ -359,13 +343,39 @@ void task2Menu() {
             }
         }
     } catch (const std::exception& e) {
-        cout << "Ошибка: " << e.what() << endl;
+        cout << "Exception " << e.what() << endl;
     }
 }
 
 void task3Menu() {
+    if (!graph) {
+        cout << "Graph is not initialized" << endl;
+        return;
+    }
+
     Task3<int, string, int> task3(graph);
-    cout << "Task 3. Get diameter of the graph and print path" << endl;
-    cout << "Result " << task3.result() << endl;
-    cout << "Path: " << task3.getPath();
+    try {
+        auto allPaths = task3.getAllPaths();
+        cout << "\nShortest paths between all vertices:" << endl;
+        cout << "--------------------------------" << endl;
+        
+        for (int i = 0; i < graph->getV(); i++) {
+            for (int j = 0; j < graph->getV(); j++) {
+                if (i != j && allPaths[i][j].distance != numeric_limits<int>::max()) {
+                    cout << "Path from " << i << " to " << j << ":" << endl;
+                    cout << "Distance: " << allPaths[i][j].distance << endl;
+                    cout << "Path: ";
+                    for (size_t k = 0; k < allPaths[i][j].path.size(); k++) {
+                        cout << allPaths[i][j].path[k];
+                        if (k < allPaths[i][j].path.size() - 1) {
+                            cout << " -> ";
+                        }
+                    }
+                    cout << "\n--------------------------------" << endl;
+                }
+            }
+        }
+    } catch (const runtime_error& e) {
+        cout << "Error: " << e.what() << endl;
+    }
 }
