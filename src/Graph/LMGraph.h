@@ -165,7 +165,7 @@ public:
             cout << "*" << vtmp->v_ind << "->";
             etmp = vtmp->eNode;
             while (etmp) {
-                cout << etmp->e->getV2()->getInd();
+                cout << etmp->e->getV2()->getInd()  << ":" << etmp->e->getW();
                 etmp = etmp->next;
                 if(etmp) cout << "->";
             }
@@ -229,7 +229,6 @@ public:
         prev->next = new VNode(v, nullptr, nullptr);
     }
     void setDirected(bool d) { directed = d; }
-    // edge *getEdge(vertex *v1, vertex *v2) { return getEdge(v1->getInd(), v2->getInd()); }
     Edge<DATA, NAME, WD>  *getEdge(int v1, int v2) {
         VNode *vtmp = list;
         ENode *etmp;
@@ -247,23 +246,6 @@ public:
         }
         return nullptr;
     }
-    // Edge* LGraph<DATA, NAME, WEIGHT>::getEdge(int v1, int v2) {
-//     VNode* vnode = list;
-//     while (vnode) {
-//         if (vnode->v_ind == v1) {  // Нашли вершину v1
-//             ENode* enode = vnode->eNode;
-//             while (enode) {
-//                 if (enode->e->getV2()->getInd() == v2) {  // Нашли ребро в v2
-//                     return enode->e;
-//                 }
-//                 enode = enode->next;
-//             }
-//             break;  // Все рёбра проверены
-//         }
-//         vnode = vnode->next;
-//     }
-//     return nullptr;  // Ребро не найдено
-// }
 
     vector<vertex*>& getVertexVector() { return vertexVector; }
     vector<edge*>* getEdgeVector() {
@@ -333,7 +315,9 @@ public:
         }
         delete edgeVector;
     }   
-    bool hasEdge(int i, int j) { return matrix[i][j]; }
+    bool hasEdge(int i, int j) {
+        return matrix[i][j];
+    }
     edge *insertE(vertex *v1, vertex *v2) {
         if (!directed)
             matrix[v2->getInd()][v1->getInd()] = new Edge<DATA, NAME, WD>(v2, v1, 1);

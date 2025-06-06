@@ -113,8 +113,10 @@ public:
         return v;
     }
     bool deleteV(vertex *v) {
+        for(int i = 0; i < Vcnt; i++) deleteE(graphForm->getVertexVector()[i], v);
         for (int i = 0; i < Vcnt; i++) {
             if (graphForm->getVertexVector()[i]->getInd() == v->getInd()) {
+                if(isDirected) for(int j = 0; j < Vcnt; j++) deleteE(v, graphForm->getVertexVector()[j]);
                 delete graphForm->getVertexVector()[i];
                 for (int j = i; j < Vcnt - 1; ++j)
                     graphForm->getVertexVector()[j] = graphForm->getVertexVector()[j + 1];
@@ -126,9 +128,19 @@ public:
         }
         return false;
     }
-    edge *insertE(vertex *i, vertex *j) { return graphForm->insertE(i, j); }
-    edge *insertE(vertex *i, vertex *j, WD w) { return graphForm->insertE(i, j, w); }
-    bool deleteE(vertex* v1, vertex* v2) { return graphForm->deleteE(v1, v2); }
+    edge *insertE(vertex *i, vertex *j) {
+        Ecnt++;
+        return graphForm->insertE(i, j);
+    }
+    edge *insertE(vertex *i, vertex *j, WD w) {
+        Ecnt++;
+        return graphForm->insertE(i, j, w);
+    }
+    bool deleteE(vertex* v1, vertex* v2) {
+        bool res = graphForm->deleteE(v1, v2);
+        if(res) Ecnt--;
+        return res;
+    }
     edge *getEdge(int v1, int v2) { return graphForm->getEdge(v1, v2); }
     void printGraph() { graphForm->print(); }
     class VertexIterator {
@@ -136,7 +148,6 @@ public:
         vector<vertex*> vertexVector;
         int index;
     public:
-        // using vertex = Vertex<DATA, NAME>;
         using referenceV = VertexIterator &;
         VertexIterator(vector<vertex*>& vertexVector, int ind) : vertexVector(vertexVector), index(ind) {
             if(vertexVector.size() <= 0) index = -1; 
@@ -144,9 +155,6 @@ public:
         Vertex<DATA, NAME>* operator*() const {
             if(index < 0 ) throw "Out of bounds";
             return vertexVector[index]; }
-        // Vertex<DATA, NAME>* operator->() {
-        //     return vertexVector[index];
-        // }
         friend bool operator==(const VertexIterator &a, const VertexIterator &b) { return a.index == b.index; };
         friend bool operator!=(const VertexIterator &a, const VertexIterator &b) { return a.index != b.index; };
         const referenceV &operator++() {
