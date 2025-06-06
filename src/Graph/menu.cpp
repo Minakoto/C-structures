@@ -333,28 +333,49 @@ void oeitm(int v) {
 
 void t2m() {
   Task2<int, string, int> task2(graph);
-  auto rst = task2.result();
+
   cout << "Result:" << endl;
-  for(int j = 0; j < graph->V(); j++) {
-    for (int i = 0; i < graph->V() - 1; i++) {
-      if(rst[j][i] != -1)  {
-        cout << j << "->" << i << " :: " << rst[j][i] << "\n";
+  try {
+      auto allPaths = task2.getAllPaths();
+      for (int i = 0; i < graph->V(); i++) {
+          for (int j = 0; j < graph->V(); j++) {
+              if (i != j && allPaths[i][j].distance != numeric_limits<int>::max()) {
+                  cout << "(" << i << ", " << j << "): ";
+                  for (size_t k = 0; k < allPaths[i][j].path.size(); k++) {
+                      cout << allPaths[i][j].path[k];
+                      if (k < allPaths[i][j].path.size() - 1) {
+                          cout << " -> ";
+                      }
+                  }
+                  cout << endl;
+              }
+          }
       }
-    }
-    cout << endl;
+  } catch (const runtime_error& e) {
+      cout << "Отрицательный путь";
   }
 }
 
 void t3m() {
   Task3<int, string, int> task3(graph);
-  auto rst = task3.result();
-  cout << "Result:" << endl;
-  for(int j = 0; j < graph->V(); j++) {
-    for (int i = 0; i < graph->V() - 1; i++) {
-      if(rst[j][i] != numeric_limits<int>::max())  {
-        cout << j << "->" << i << " :: " << rst[j][i] << "\n";
+  try {
+      auto allPaths = task3.getAllPaths();
+      for (int i = 0; i < graph->V(); i++) {
+          for (int j = 0; j < graph->V(); j++) {
+              if (i != j && allPaths[i][j].distance != numeric_limits<int>::max()) {
+                  cout << "(" << i << ", " << j << "): ";
+                  for (size_t k = 0; k < allPaths[i][j].path.size(); k++) {
+                      cout << allPaths[i][j].path[k];
+                      if (k < allPaths[i][j].path.size() - 1) {
+                          cout << " -> ";
+                      }
+                  }
+                  cout << endl;
+              }
+          }
       }
-    }
-    cout << endl;
+  } catch (const runtime_error& e) {
+      cout << "Отрицательный путь";
   }
+
 }
