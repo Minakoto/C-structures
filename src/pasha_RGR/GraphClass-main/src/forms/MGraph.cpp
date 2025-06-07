@@ -3,6 +3,9 @@
 template<typename DATA, typename NAME, typename WEIGHT>
 MGraph<DATA, NAME, WEIGHT>::MGraph(unsigned _size, bool _directed) {
     size = _size;
+    directed = _directed;
+    
+    // Initialize matrix
     matrix.resize(size);
     for (int i = 0; i < size; ++i) {
         matrix[i].resize(size);
@@ -10,7 +13,16 @@ MGraph<DATA, NAME, WEIGHT>::MGraph(unsigned _size, bool _directed) {
             matrix[i][j] = nullptr;
         }
     }
-    directed = _directed;
+    
+    // Initialize vertex vector
+    vertexVector.clear();
+    for (int i = 0; i < size; ++i) {
+        VertexT* vertex = new VertexT();
+        vertex->setInd(i);
+        vertex->setName(to_string(i));
+        vertexVector.push_back(vertex);
+    }
+    
     edgeVector = new vector<Edge<DATA, NAME, WEIGHT> *>();
 }
 
@@ -136,16 +148,36 @@ void MGraph<DATA, NAME, WEIGHT>::setDirected(bool d) {
 
 template<typename DATA, typename NAME, typename WEIGHT>
 Edge<DATA, NAME, WEIGHT> *MGraph<DATA, NAME, WEIGHT>::insertE(VertexT *v1, VertexT *v2) {
-    if (!directed)
-        matrix[v2->getInd()][v1->getInd()] = new Edge<DATA, NAME, WEIGHT>(v2, v1, 1);
-    return matrix[v1->getInd()][v2->getInd()] = new Edge<DATA, NAME, WEIGHT>(v1, v2, 1);
+    if (!v1 || !v2 || v1->getInd() < 0 || v2->getInd() < 0 || 
+        v1->getInd() >= size || v2->getInd() >= size) {
+        return nullptr;
+    }
+    
+    // Use vertices from vertexVector
+    VertexT* sourceVertex = vertexVector[v1->getInd()];
+    VertexT* targetVertex = vertexVector[v2->getInd()];
+    
+    if (!directed) {
+        matrix[v2->getInd()][v1->getInd()] = new Edge<DATA, NAME, WEIGHT>(targetVertex, sourceVertex, 1);
+    }
+    return matrix[v1->getInd()][v2->getInd()] = new Edge<DATA, NAME, WEIGHT>(sourceVertex, targetVertex, 1);
 }
 
 template<typename DATA, typename NAME, typename WEIGHT>
 Edge<DATA, NAME, WEIGHT> *MGraph<DATA, NAME, WEIGHT>::insertE(VertexT *v1, VertexT *v2, int _w) {
-    if (!directed)
-        matrix[v2->getInd()][v1->getInd()] = new Edge<DATA, NAME, WEIGHT>(v2, v1, _w);
-    return matrix[v1->getInd()][v2->getInd()] = new Edge<DATA, NAME, WEIGHT>(v1, v2, _w);
+    if (!v1 || !v2 || v1->getInd() < 0 || v2->getInd() < 0 || 
+        v1->getInd() >= size || v2->getInd() >= size) {
+        return nullptr;
+    }
+    
+    // Use vertices from vertexVector
+    VertexT* sourceVertex = vertexVector[v1->getInd()];
+    VertexT* targetVertex = vertexVector[v2->getInd()];
+    
+    if (!directed) {
+        matrix[v2->getInd()][v1->getInd()] = new Edge<DATA, NAME, WEIGHT>(targetVertex, sourceVertex, _w);
+    }
+    return matrix[v1->getInd()][v2->getInd()] = new Edge<DATA, NAME, WEIGHT>(sourceVertex, targetVertex, _w);
 }
 
 template<typename DATA, typename NAME, typename WEIGHT>
