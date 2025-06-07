@@ -1,10 +1,6 @@
 #include "Task3.h"
-// #include "Task2.h"
-// #include <iostream>
-// using namespace std;
 
 Graph<int, string, int> *graph;
-
 void printFillMenu();
 void itm();
 void vitm();
@@ -330,36 +326,31 @@ void oeitm(int v) {
     }
   }
 }
-
 void t2m() {
   Task2<int, string, int> task2(graph);
-
   cout << "Result:" << endl;
-  try {
-      auto allPaths = task2.getAllPaths();
-      for (int i = 0; i < graph->V(); i++) {
-          for (int j = 0; j < graph->V(); j++) {
-              if (i != j && allPaths[i][j].distance != numeric_limits<int>::max()) {
-                  cout << "(" << i << ", " << j << "): ";
-                  for (size_t k = 0; k < allPaths[i][j].path.size(); k++) {
-                      cout << allPaths[i][j].path[k];
-                      if (k < allPaths[i][j].path.size() - 1) {
-                          cout << " -> ";
-                      }
+  auto allPaths = task2.result();
+  for (int i = 0; i < graph->V(); i++) {
+      for (int j = 0; j < graph->V(); j++) {
+          if (i != j && allPaths[i][j].distance != numeric_limits<int>::max()) {
+              cout << "(" << i << ", " << j << "): ";
+              for (size_t k = 0; k < allPaths[i][j].path.size(); k++) {
+                  cout << allPaths[i][j].path[k];
+                  if (k < allPaths[i][j].path.size() - 1) {
+                      cout << " -> ";
                   }
-                  cout << endl;
               }
+              cout << endl;
           }
       }
-  } catch (const runtime_error& e) {
-      cout << "Отрицательный путь";
   }
 }
 
 void t3m() {
   Task3<int, string, int> task3(graph);
+  cout << "Result:" << endl;
   try {
-      auto allPaths = task3.getAllPaths();
+      auto allPaths = task3.result();
       for (int i = 0; i < graph->V(); i++) {
           for (int j = 0; j < graph->V(); j++) {
               if (i != j && allPaths[i][j].distance != numeric_limits<int>::max()) {
@@ -375,7 +366,7 @@ void t3m() {
           }
       }
   } catch (const runtime_error& e) {
-      cout << "Отрицательный путь";
+      cout << "Отрицательный путь\n";
   }
 
 }

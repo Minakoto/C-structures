@@ -29,7 +29,6 @@ public:
     Edge(Vertex<DATA, NAME> *v1, Vertex<DATA, NAME> *v2, WD w) : v1(v1), v2(v2), w(w), Weighted(true) {
         data = v1->getInd()*10+v2->getInd(); 
     }
-    // Edge(Vertex<DATA, NAME> *_v1, Vertex<DATA, NAME> *_v2, int _w, DATA _data);
     Vertex<DATA, NAME> *getV1() { return v1; }
     Vertex<DATA, NAME> *getV2() { return v2; }
     WD getW() { return w; }
